@@ -1,0 +1,12 @@
+MODULE_CFLAGS += -I../../src/
+ML_MODULES ?= \
+	mlv_lite \
+	mlv_play \
+	mlv_snd \
+	dual_iso \
+	silent \
+	lua \
+	crop_rec \
+	sd_uhs \
+	file_man \
+	bench \
