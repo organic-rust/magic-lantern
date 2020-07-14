@@ -1,1 +1,1 @@
-mixed changes. Prepping for git temporary solution.
+readme sd_uhs.c:(Stops warnings about summary tag missing)
