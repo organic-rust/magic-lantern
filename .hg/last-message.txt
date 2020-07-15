@@ -1,1 +1,1 @@
-readme sd_uhs.c:(Stops warnings about summary tag missing)
+crop_rec.c:(EOSM imncreased 3k cinema modes to 20fps thanks to sd_uhs patch)
