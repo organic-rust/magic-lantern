@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM imncreased 3k cinema modes to 20fps thanks to sd_uhs patch)
+crop_rec.c:(EOSM reworking 3k preset, adding 24fps, reducing no ratio to 18fps)
