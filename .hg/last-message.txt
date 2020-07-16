@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reworking 3k preset, adding 24fps, reducing no ratio to 18fps)
+crop_rec.c:(EOSM typo)
