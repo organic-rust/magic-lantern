@@ -4279,7 +4279,7 @@ static int raw_rec_should_preview(void)
     if (prevmode)
     {
         if ((raw_active_height > 1300 || raw_active_width > 1800) && RAW_IS_IDLE) preview_mode = 2;
-        if (raw_active_height < 1300 && raw_active_width < 1800 && RAW_IS_IDLE) preview_mode = 1;
+        if (raw_active_height < 1300 && raw_active_width < 1801 && RAW_IS_IDLE) preview_mode = 1;
     }
 
     int prefer_framing_preview = 

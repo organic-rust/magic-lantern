@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 2k mode, one corrupted frame. Testing re_713 -10 is till an issue)
+crop_rec.c,mlv_lite.c:(EOSM enable x3crop when pushing SET also with anamorphic mode)
