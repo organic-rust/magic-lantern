@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM add x10zoom for higher resolution presets)
+crop_rec.c:(EOSM iso needs to follow x10zoom)
