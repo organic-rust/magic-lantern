@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM x3crop also with anamorphic, flv modes independent preset)
+crop_rec.c:(EOSM typo)
