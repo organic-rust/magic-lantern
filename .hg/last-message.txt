@@ -1,1 +1,1 @@
-cine.lua:(tiny change anamorphic renamed)
+crop_rec.c:(EOSM add x10zoom for higher resolution presets)
