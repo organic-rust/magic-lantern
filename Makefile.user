@@ -143,8 +143,8 @@ STRIP=$(CROSS_COMPILE)strip
 #
 # Host compiler settings
 # 
-HOST_CC=gcc-5
-HOST_LD=gcc-5
+HOST_CC=gcc
+HOST_LD=gcc
 HOST_AR=$(shell which ar)
 
 # You can customize CFLAG here

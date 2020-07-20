@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM gain access to timelapse mennu all ratios anamorphic flv modes)
+cr2hdr.c:(test pushing a compiler fix for gcc)
