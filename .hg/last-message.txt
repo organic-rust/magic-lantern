@@ -1,1 +1,1 @@
-cr2hdr.c:(test pushing a compiler fix for gcc)
+crop_rec.c:(EOSM hide console when pushing MENU or tap display)
