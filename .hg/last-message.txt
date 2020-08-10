@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM hide console when pushing MENU or tap display)
+crop_rec.c:(EOSM real time preview 3k modes. Thanks to theBilalFakhouri)
