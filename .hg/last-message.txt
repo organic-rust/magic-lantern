@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM real time preview 3k modes. Thanks to theBilalFakhouri)
+crop_rec.c:(EOSM real time preview also with 4k modes. Todo. 5k)
