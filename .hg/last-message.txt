@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM real time preview also with 4k modes. Todo. 5k)
+crop_rec.c:(EOSM explain text correction in menu)
