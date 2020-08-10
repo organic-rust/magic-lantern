@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM explain text correction in menu)
+crop_rec.c:(EOSM 2.8K 2.39:1)
