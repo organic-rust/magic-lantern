@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 2.8K 2.39:1)
+crop_rec.c:(EOSM 2.8k preset implemented)
