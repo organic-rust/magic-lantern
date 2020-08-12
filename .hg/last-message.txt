@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM bug 16:9 3K mode fixed)
+crop_rec.c:(EOSM toggle between framing and real time with INFO also when recording)
