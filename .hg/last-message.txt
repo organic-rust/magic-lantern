@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM ntering real time preview 2.8k)
+crop_rec.c:(EOSM bug 16:9 3K mode fixed)
