@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 2.8k preset implemented)
+crop_rec.c:(EOSM ntering real time preview 2.8k)
