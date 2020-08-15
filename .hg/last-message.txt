@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM toggle between framing and real time with INFO also when recording)
+crop_rec.c:(EOSM fine shutter tuning fixed in 2.8k mode)
