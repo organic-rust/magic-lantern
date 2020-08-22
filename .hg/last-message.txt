@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fine shutter tuning fixed in 2.8k mode)
+dng.c:(adding the correct default scale tag for anamorphic footage)
