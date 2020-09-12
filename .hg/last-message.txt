@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM full real time preview, well almost in x5 zoom. HDMI experimenting as well. All code from theBilalFakhouri)
+crop_rec.c:(typo)
