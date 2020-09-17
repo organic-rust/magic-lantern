@@ -1,1 +1,1 @@
-crop_rec.c:(typo)
+crop_rec.c:(eosm anamorphic full real time preset. thanks theBilallFakhouri)
