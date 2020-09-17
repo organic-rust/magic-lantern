@@ -1,1 +1,1 @@
-crop_rec.c,mlv_lite.c:(EOSM turn off prevmode auto and sticky push auto config)
+crop_rec.c:(EOSM smaller crop corrections)
