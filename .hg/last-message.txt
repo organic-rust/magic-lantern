@@ -1,1 +1,1 @@
-crop_rec.c:(eosm anamorphic full real time preset. thanks theBilallFakhouri)
+crop_rec.c:(x5crop 1920x1280 frtp added)
