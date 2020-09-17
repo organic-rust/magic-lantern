@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM smaller crop corrections)
+crop_rec.c:(EOSM fix jagged lines)
