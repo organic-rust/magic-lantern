@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM added theBilalFakhouri 16:9 and 2:2 anamorphic frtp presets)
+crop_rec.c:(EOSM trying out theBilalFakhouri 10/12bit routines)
