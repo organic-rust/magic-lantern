@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fixing 2 by 1 preset)
+crop_rec.c:(EOSM analog iso compensation not holding up with frtp presets)
