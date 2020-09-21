@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM trying out theBilalFakhouri 10/12bit routines)
+crop_rec.c:(EOSM epic 2.35:1 from theBilalFakhouri added)
