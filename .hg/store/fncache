@@ -4233,3 +4233,7 @@ data/platform/EOSM.100/picstyle.c.i
 data/contrib/qemu/scripts/run_ml_5D3_123.sh.i
 data/map2idc.i
 data/contrib/qemu/scripts/700D/patches.gdb.i
+data/data/cropmks/2_1.bmp.i
+data/data/cropmks/2_35_1.bmp.i
+data/data/cropmks/16_9.bmp.i
+data/data/cropmks/2_5k.bmp.i
