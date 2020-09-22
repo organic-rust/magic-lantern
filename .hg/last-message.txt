@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM analog iso compensation not holding up with frtp presets)
+crop_rec.c:(EOSM integrate frtp step 1)
