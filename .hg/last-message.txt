@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM integrate frtp step 1)
+crop_rec.c:(EOSM adding frtp into tap display presets)
