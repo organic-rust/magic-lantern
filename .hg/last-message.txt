@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM adding frtp into tap display presets)
+crop_rec.c:(EOSM make room for personal cropmarks)
