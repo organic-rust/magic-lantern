@@ -1,1 +1,1 @@
-mlv_lite.c:(EOSM cropmarks automation anamorphic frtp)
+crop_rec.c:(EOSM set 25fps working for 2.35:1)
