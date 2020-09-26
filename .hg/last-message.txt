@@ -1,1 +1,1 @@
-movtweaks.c,crop_rec.c:(EOSM start off with screen layout bottom under, timer reg 16:9 frtp)
+crop_rec.c:(EOSM reg 7150 obsolete)
