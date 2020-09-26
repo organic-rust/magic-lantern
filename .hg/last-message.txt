@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 1920x1176. Pixel lines otherwise)
+crop_rec.c:(EOSM testing/keeping zoom code)
