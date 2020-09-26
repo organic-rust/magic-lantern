@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM menu info)
+crop_rec.c:(EOSM pausing bitdepth routines from theBilalFakhouri)
