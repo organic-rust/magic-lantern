@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM set 25fps working for 2.35:1)
+movtweaks.c,crop_rec.c:(EOSM start off with screen layout bottom under, timer reg 16:9 frtp)
