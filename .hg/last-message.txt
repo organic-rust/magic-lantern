@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM missed two regs)
+crop_rec.c:(EOSM allow for x10zoom when not recording by pushing SET)
