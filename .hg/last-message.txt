@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM allow for x10zoom when not recording by pushing SET)
+crop_rec.c:(EOSM refinements to frtp presets. Removing complex finger tap routines. Not useful)
