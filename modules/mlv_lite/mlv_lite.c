@@ -4389,6 +4389,8 @@ static int raw_rec_should_preview(void)
      	    long_halfshutter_press = 1;
 /* when using x10toggle mode in crop_rec.c will disable framing preview temporarily*/
             if (shamem_read(0xc0f11a88) == 0x1) long_halfshutter_press = 0;
+            //Will keep from framing while running anamorphic frtp mode
+            if ((raw_active_height > 1300 || raw_active_width > 1800) && preview_mode == 1) long_halfshutter_press = 0;
 /* let´s disable framing in realtime preview while using mcm rewired mode with eosm */
             if (shamem_read(0xc0f383d4) == 0x4f0010 && cam_eos_m) long_halfshutter_press = 0;
 /* 48fps mode in crop_rec.c. Affects 2.39:1 and 2.35:1 */

@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM refinements to frtp presets. Removing complex finger tap routines. Not useful)
+crop_rec.c,mlv_lite.c:(EOSM anamorphic frtp mode with hdmi support. Fix for halfshutter while running real time preview and cropmarks kept)
