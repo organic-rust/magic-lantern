@@ -1,1 +1,1 @@
-crop_rec.c,mlv_lite.c:(EOSM anamorphic frtp mode with hdmi support. Fix for halfshutter while running real time preview and cropmarks kept)
+crop_rec.c:(EOSM black level compensation not holding up with hdmi causing corrupted frames. Let´s stick to green preview with reduced bits)
