@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM back again to engdrvout)
+crop_rec.c:(EOSM missed a zzom reg frtp anamorphic)
