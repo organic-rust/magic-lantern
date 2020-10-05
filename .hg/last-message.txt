@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM missed a zzom reg frtp anamorphic)
+crop_rec.c,mlv_lite.c:(EOSM first attempt zoom function mv1080p modes)
