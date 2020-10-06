@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM centering zoom with mv1080p modes. Looks shutty but focusing possible)
+crop_rec.c:(EOSM bitdepth routines changed regarding black level and brigthness)
