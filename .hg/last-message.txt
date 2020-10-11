@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM removing F3 adress with zoom function. Buggy)
+crop_rec.c:(EOSM refresh cropmarks when going from frtp to mcm modes)
