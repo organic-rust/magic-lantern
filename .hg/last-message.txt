@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM set 25fps enables 18fps only framing flv anamoprhic)
+crop_rec.c:(EOSM 24fps 5k anamorphic flv when set 25fps enabled cinemodes)
