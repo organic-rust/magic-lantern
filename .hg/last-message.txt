@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 24fps 5k anamorphic flv when set 25fps enabled cinemodes)
+crop_rec.c:(EOSM x5 presets also enables framing from tap display)
