@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM refresh cropmarks when going from frtp to mcm modes)
+crop_rec.c:(EOSM set 25fps enables 18fps only framing flv anamoprhic)
