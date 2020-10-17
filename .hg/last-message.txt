@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM x5 presets also enables framing from tap display)
+crop_rec.c:(EOSM increased fps no ratio set 25fps enabled higher frame rate mode)
