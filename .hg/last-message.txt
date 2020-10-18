@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM increased fps no ratio set 25fps enabled higher frame rate mode)
+crop_rec.c:(EOSM raise one hieght pixel to fix pixelated bottom)
