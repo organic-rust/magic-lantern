@@ -1,1 +1,1 @@
-crop_rec.c,internals.h,tweaks.c(EOSM define Kill Canon GUI)
+tweaks.c:(EOSM should be turned off as default)
