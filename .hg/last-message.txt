@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fps reduce 1 step)
+crop_rec.c:(EOSM reduce two more steps)
