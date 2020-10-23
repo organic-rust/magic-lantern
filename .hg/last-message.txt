@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM start out in 12bit, anamorphic frtp)
+crop_rec.c:(EOSM adding preset tap display, rearranging)
