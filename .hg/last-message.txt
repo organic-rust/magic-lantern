@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reduce two more steps)
+crop_rec.c:(EOSM start out in 12bit, anamorphic frtp)
