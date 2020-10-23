@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM adding preset tap display, rearranging)
+crop_rec.c:(EOSM building ratios 2k crop preset)
