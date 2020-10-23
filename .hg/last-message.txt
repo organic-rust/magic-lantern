@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fix bug using SET when going x5 to x10 and back)
+crop_rec.c,internals.h,tweaks.c(EOSM define Kill Canon GUI)
