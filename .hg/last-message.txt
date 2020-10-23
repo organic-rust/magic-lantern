@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM exclude anamorphic frtp from black level compensation when reducing bitdepth. Corrupted frames)
+crop_rec.c:(EOSM fps reduce 1 step)
