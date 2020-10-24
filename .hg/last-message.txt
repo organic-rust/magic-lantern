@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM building ratios 2k crop preset)
+crop_rec.c:(EOSM using kill canon gui retains also cropmarks nas expected)
