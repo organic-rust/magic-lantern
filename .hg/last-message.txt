@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM realtime zoom preview also for 2k frtp preset)
+crop_rec.c,mlv_lite.c:(EOSM a lot of work getting rid of cropmarks and getting cropmarks corrected 2k frtp preset)
