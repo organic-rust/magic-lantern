@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM yet another workaround getting clean screen for 2k preset)
+crop_rec.c:(EOSM using reset cropmarks instead as a fix for hardcoded 16,9 borders)
