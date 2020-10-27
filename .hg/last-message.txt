@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reset cropmarks when starting camera)
+crop_rec.c:(EOSM reset cropmarks in more places)
