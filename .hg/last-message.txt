@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM better masking frtp preset)
+crop_rec.c:(EOSM reset cropmarks when starting camera)
