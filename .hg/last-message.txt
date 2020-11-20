@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM hdmi out fix)
+crop_rec.c:(EOSM tiny preview bug fix)
