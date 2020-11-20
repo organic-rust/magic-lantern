@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reset cropmarks when using zoomaid)
+crop_rec.c:(EOSM hdmi out fix)
