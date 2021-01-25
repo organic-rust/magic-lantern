@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM rearrange engdrvout regs for anamorphic frtp, seems reducing corrupted frames)
+crop_rec.c:(EOSM fixing zoom function anamorphic frtp)
