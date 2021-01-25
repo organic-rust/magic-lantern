@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM tiny preview bug fix)
+crop_rec.c:(EOSM rearrange engdrvout regs for anamorphic frtp, seems reducing corrupted frames)
