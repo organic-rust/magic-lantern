@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM cmos 7 to 303)
+crop_rec.c:(EOSM cmos 325 better)
