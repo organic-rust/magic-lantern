@@ -1,1 +1,1 @@
-mlv_lite.c:(EOSM correcting preview mode)
+crop_rec.c:(EOSM cmos 7 to 303)
