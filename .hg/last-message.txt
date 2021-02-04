@@ -1,1 +1,1 @@
-crop_rec.c(EOSM anamorphic_rewired_flv_eosm and !ratios && set_25fps, will go into 1136x2280)
+mlv_lite.c:(EOSM correcting typo)
