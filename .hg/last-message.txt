@@ -1,1 +1,1 @@
-mlv_lite.c:(EOSM correcting typo)
+mlv_lite.c:(EOSM correcting preview mode)
