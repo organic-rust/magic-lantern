@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM cmos 325 better)
+mlv_lite.c(liveview hacks)
