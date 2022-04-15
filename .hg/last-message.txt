@@ -1,1 +1,1 @@
-edmac-memcpy.c(Changed raw stream)
+crop_rec.c:(disable x3crop toggle and focus aid when using hdmi)
