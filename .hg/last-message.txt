@@ -1,1 +1,1 @@
-crop_rec.c:(disable x3crop toggle and focus aid when using hdmi)
+mlv_play.c:(exit cleanly with menu button)
