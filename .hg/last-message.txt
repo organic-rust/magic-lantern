@@ -1,1 +1,1 @@
-crop_rec.c:(fixes freezing regs in anamorphic_frtp preset caused by get_halfshutter check when zooming)
+crop_rec.c:(missed routine for two more ratios anamorphic_frtp)
