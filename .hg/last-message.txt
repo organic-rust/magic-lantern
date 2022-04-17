@@ -1,1 +1,1 @@
-mlv_play.c:(exit cleanly with menu button)
+crop_rec.c:(fixes freezing regs in anamorphic_frtp preset caused by get_halfshutter check when zooming)
