@@ -1,1 +1,1 @@
-mlv_play.c:(tap_display to exit)
+crop_rec.c:(tap display to zoom while recording Anamorphic frtp)
