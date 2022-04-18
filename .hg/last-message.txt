@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM zoom routines when using anamorphic_frtp using SET button)
+crop_rec.c:(EOSM zoomaid set to default when using Anamorphic_frtp. More stable)
