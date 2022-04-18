@@ -830,7 +830,7 @@ static void mlv_play_osd_task(void *priv)
                 {
 
 	/*Will exit mlv_play cleaner than using halfshutter button*/ 
-                 if(key == MODULE_KEY_MENU)
+                 if(key == MODULE_KEY_MENU || key == MODULE_KEY_TOUCH_1_FINGER)
                  {
 	            mlv_play_render_abort = 1;
                  }
@@ -865,7 +865,7 @@ static void mlv_play_osd_task(void *priv)
                 {
 
 	/*Will exit mlv_play cleaner than using halfshutter button*/ 
-                 if(key == MODULE_KEY_MENU)
+                 if(key == MODULE_KEY_MENU || key == MODULE_KEY_TOUCH_1_FINGER)
                  {
 	            mlv_play_render_abort = 1;
                  }
@@ -2845,6 +2845,7 @@ static unsigned int mlv_play_keypress_cbr(unsigned int key)
             case MODULE_KEY_PLAY:
             case MODULE_KEY_MENU:
             case MODULE_KEY_PRESS_ZOOMIN:
+            case MODULE_KEY_TOUCH_1_FINGER:
             {
                 msg_queue_post(mlv_play_queue_osd, (uint32_t) key);
                 return 0;
