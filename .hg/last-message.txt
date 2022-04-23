@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM zoomaid set to default when using Anamorphic_frtp. More stable)
+crop_rec.c:(EOSM disable zoom when in x10 zoom mode for anamorphic_frtp mode)
