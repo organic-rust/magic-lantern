@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM rewrite INFO button, add Zebras and False colors)
+crop_rec.c:(EOSM adding more shortcuts to INFo and tap display routines)
