@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM SET button added to customize buttons)
+crop_rec.c:(EOSM more routines around SET)
