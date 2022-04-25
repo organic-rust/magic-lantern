@@ -1,1 +1,1 @@
-default reset
+crop_rec.c:(EOSM some fix https://foss.heptapod.net/magic-lantern/magic-lantern/-/commit/692eb50142bfdfa52a86253bdc46c06cf52a38f9)
