@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM adding more shortcuts to INFo and tap display routines)
+crop_rec.c:(EOSM SET button added to customize buttons)
