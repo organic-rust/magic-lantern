@@ -1,1 +1,1 @@
-crop_rec.c:(ESOM bug fixes around zoomaid. To be tested)
+crop_rec.c:(EOSM reducing fps with anamorphic frtp in try to xix preview bug.)
