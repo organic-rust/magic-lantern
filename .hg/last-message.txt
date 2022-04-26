@@ -1,1 +1,1 @@
-crop_rec:(EOSM set reset)
+crop_rec.c:(ESOM bug fixes around zoomaid. To be tested)
