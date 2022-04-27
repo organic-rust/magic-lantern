@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reducing fps with anamorphic frtp in try to xix preview bug.)
+crop_rec.c:(EOSM possible fixes around anamorphic frtp)
