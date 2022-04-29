@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM possible fixes around anamorphic frtp)
+crop_rec.c:(EOSM going for snappier x10 zoom)
