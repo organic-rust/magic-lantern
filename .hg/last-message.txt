@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM back out stop fullshutter changes. Buggy)
+crop_rec.c:(EOSM match fps x10 zoom anamorphic frtp)
