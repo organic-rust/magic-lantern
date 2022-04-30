@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM Block shutter button when using sticky push)
+crop_rec.c:(EOSM back out stop fullshutter changes. Buggy)
