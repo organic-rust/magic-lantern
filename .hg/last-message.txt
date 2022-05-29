@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM match fps x10 zoom anamorphic frtp)
+crop_rec.c:(Fix info_switch issue)
