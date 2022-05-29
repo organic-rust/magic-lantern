@@ -1,1 +1,1 @@
-crop_rec.c:(Fix info_switch issue)
+crop_rec.c:(EOSM x10 zoomaid fixes)
