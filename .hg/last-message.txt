@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM x10 zoomaid fixes)
+mlv_lite.c(EOSM more_hacks info about issues with shutter fine-tuning)
