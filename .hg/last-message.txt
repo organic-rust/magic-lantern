@@ -1,1 +1,1 @@
-mlv_lite.c(EOSM more_hacks info about issues with shutter fine-tuning)
+crop_rec.c:(eosm disable more hacks when movie crop mode)

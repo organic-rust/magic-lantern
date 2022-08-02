@@ -2290,26 +2290,32 @@ void hack_liveview(int unhack)
 static REQUIRES(RawRecTask)
 void hack_liveview_more()
 {
-    if (more_hacks && shamem_read(0xc0f383d4) != 0x4f0010) /* excludes mcm mode on eosm */
-	{
-		void (*aewbSuspend)() = 
-		cam_eos_m ? 0xff2606f4 :
-		cam_5d3_113 ? 0xff23bc60 :
-		cam_5d3_123 ? 0xff23ff10 :
-		0;
-		
-		void (*lvfaceEnd)() = 
-		cam_eos_m ? 0xff177ff8 :
-		cam_5d3_113 ? 0xff16d77c :
-		cam_5d3_123 ? 0xff16e318 :
-		0;
-		
-		lvfaceEnd();
-		
-		if (more_hacks == 2)
-		{
-			aewbSuspend();
-		}
+    /* Exlude Movie Crop Mode from the new hacks */
+    if (video_mode_crop)
+    {
+        return;
+    }
+    
+    if (more_hacks) /* excludes mcm mode on eosm */
+    {
+        void (*aewbSuspend)() =
+        cam_eos_m   ? 0xff2606f4 :
+        cam_5d3_113 ? 0xff23bc60 :
+        cam_5d3_123 ? 0xff23ff10 :
+        0;
+        
+        void (*lvfaceEnd)() =
+        cam_eos_m   ? 0xff177ff8 :
+        cam_5d3_113 ? 0xff16d77c :
+        cam_5d3_123 ? 0xff16e318 :
+        0;
+        
+        lvfaceEnd();
+        
+        if (more_hacks == 2)
+        {
+            aewbSuspend();
+        }
 	}
 	
 /* Causes freeze on eosm
