@@ -1,1 +1,1 @@
-crop_rec.c:(eosm disable more hacks when movie crop mode)
+crop_rec.c:(EOSM be able and use halfshutter with anamorphic_frt mode for zooming)

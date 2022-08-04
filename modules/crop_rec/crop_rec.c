@@ -5861,6 +5861,19 @@ if (shutteraverage)
     {
         zoom = 0;
     }
+    
+    
+    //workaround using halfshutter for zooming
+    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && set)
+    {
+        key = MODULE_KEY_UNPRESS_SET;
+    }
+
+    
+    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
+    {
+        key = MODULE_KEY_PRESS_SET;
+    }
 
 
 //Need to separate zoom function and put it in crop_rec_keypress_cbr to fix corruption
