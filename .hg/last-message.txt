@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM be able and use halfshutter with anamorphic_frt mode for zooming)
+sd_uhs.c(EOSM added bilal super hack 240mHz)
