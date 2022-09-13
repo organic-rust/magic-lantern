@@ -1,1 +1,1 @@
-sd_uhs.c(EOSM added bilal super hack 240mHz)
+crop_rec.c:(EOSM 3k now working with 24/25fps thanks to 240Mhz mode)
