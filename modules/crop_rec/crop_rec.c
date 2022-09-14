@@ -4616,7 +4616,7 @@ if (!ratios)
     switch (reg)
     {
         case 0xC0F06804: return 0x7D40176 + reg_6804_width + (reg_6804_height << 16);
-        case 0xC0F06014: return 0xa10 + reg_6014;
+        case 0xC0F06014: return set_25fps ? 0xa10 -106 + reg_6014: 0xa10;
         case 0xC0F0600c: return 0x2050205 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06008: return 0x2050205 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06010: return 0x205 + reg_6008;
