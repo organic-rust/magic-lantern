@@ -22,8 +22,8 @@ static uint32_t uhs_regs[]     = { 0xC0400600, 0xC0400604,/*C0400608, C040060C*/
 static uint32_t sdr50_700D[]     = {        0x3,        0x3,                             0x4, 0x1D000301,        0x0,      0x201,      0x201,      0x100,        0x4 };   /* SDR50 values from 700D (96MHz) */
 static uint32_t sdr_160MHz[]   = {        0x2,        0x2,                             0x1, 0x1D000001,        0x0,      0x100,      0x100,      0x100,        0x1 };   /* overclocked values: 160MHz = 96*(4+1)/(2?+1) (found by brute-forcing) */
 static uint32_t sdr_192MHz[]   = {        0x8,        0x3,                             0x4, 0x1D000301,        0x0,      0x201,      0x201,      0x100,        0x4 };
-static uint32_t sdr_240MHz[]     = {        0x8,        0x3,                             0x3, 0x1D000301,        0x0,      0x201,      0x201,      0x100,        0x3 };
-static uint32_t sdr_240MHz2[]    = {        0x3,        0x3,                             0x1, 0x1D000001,        0x0,      0x100,      0x100,      0x100,        0x1 };   /* Works better on 100D, also SDR104 is stable with this preset (for Write operations) */
+static uint32_t sdr_240MHz[]     = {        0x3,        0x3,                             0x1, 0x1D000001,        0x0,      0x100,      0x100,      0x100,        0x1 };
+//static uint32_t sdr_240MHz2[]    = {        0x3,        0x3,                             0x1, 0x1D000001,        0x0,      0x100,      0x100,      0x100,        0x1 };   /* Works better on 100D, also SDR104 is stable with this preset (for Write operations) */
 
 static uint32_t uhs_vals[COUNT(uhs_regs)];  /* current values */
 static int sd_setup_mode_enable = 0;
@@ -83,7 +83,7 @@ static void GPIO_registers(uint32_t* regs, uint32_t* stack, uint32_t pc)
 
 static void WriteClock(uint32_t* regs, uint32_t* stack, uint32_t pc)
 {
-    memcpy(uhs_vals, sdr_240MHz2, sizeof(uhs_vals));
+    memcpy(uhs_vals, sdr_240MHz, sizeof(uhs_vals));
 }
 
 static void ReadClock(uint32_t* regs, uint32_t* stack, uint32_t pc)
