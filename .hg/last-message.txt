@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 3k 25fps corrected)
+crop_rec.c:8EOSM zoom in and out with halfshutter much better with a little msleep)

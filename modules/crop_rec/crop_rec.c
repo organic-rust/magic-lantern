@@ -5885,6 +5885,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
     {
         zoom = 0;
         key = MODULE_KEY_UNPRESS_SET;
+        msleep(400);
     }
     
     if (!lv) return 0;
@@ -5898,6 +5899,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
                         zoom = 1;
                         key = MODULE_KEY_UNPRESS_SET;
+                        msleep(400);
 
                         EngDrvOutLV(0xC0F04210, 0x18A05A0);
                         EngDrvOutLV(0xc0f11ACC, 0x4E0088);
@@ -5959,6 +5961,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
                     zoom = 1;
                     key = MODULE_KEY_UNPRESS_SET;
+                    msleep(400);
 
                     EngDrvOutLV(0xC0F04210, 0x12E05A0);
                     EngDrvOutLV(0xc0f11ACC, 0x8E0143);
@@ -6015,6 +6018,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
                     zoom = 1;
                     key = MODULE_KEY_UNPRESS_SET;
+                    msleep(400);
 
                     EngDrvOutLV(0xC0F04210, 0x15505A0);
                     EngDrvOutLV(0xc0f11ACC, 0x8E011E);
