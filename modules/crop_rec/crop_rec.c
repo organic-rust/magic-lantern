@@ -631,6 +631,11 @@ static inline void FAST calc_skip_offsets(int * p_skip_left, int * p_skip_right,
                 skip_top        = 28;
                 skip_bottom     = 26;
             }
+            if (ratios == 0x3)
+            {
+                skip_left       = 80;
+                skip_right      = 8;
+            }
             break;
 
         case CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp:
@@ -4589,12 +4594,12 @@ if (ratios == 3)
 {
     switch (reg)
     {
-        case 0xC0F06804: return 0x88d0162 + reg_6804_width + (reg_6804_height << 16);
+        case 0xC0F06804: return 0x8720162 + reg_6804_width + (reg_6804_height << 16);
         case 0xC0F06014: return 0xa2e + reg_6014;
         case 0xC0F0600c: return 0x1ff01ff + reg_6008 + (reg_6008 << 16);
         case 0xC0F06008: return 0x1ff01ff + reg_6008 + (reg_6008 << 16);
         case 0xC0F06010: return 0x1ff + reg_6008;
-        case 0xC0F0713c: return 0x88d + reg_713c;
+        case 0xC0F0713c: return 0x872 + reg_713c;
     }
 }
 

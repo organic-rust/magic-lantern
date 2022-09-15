@@ -130,12 +130,8 @@ static void sd_overclock_task()
     patch_hook_function(sd_setup_mode_in, MEM(sd_setup_mode_in), sd_setup_mode_in_log, "SD UHS");
     
     /* enable SDR104 */
-    /* SDR104 patch casues instability for 240 MHz preset */
-    if (sd_overclock <= 2)
-    {
         patch_hook_function(sd_set_function, MEM(sd_set_function), sd_set_function_log, "SDR104");
         SD_ReConfiguration();
-    }
     
     patch_instruction(0xff339200, 0xe3550001, 0xe3550008, "GPIO_cmp");   //Patch cmp instruction to avoid loading default GPIO registers values
     patch_hook_function(GPIO, MEM(GPIO), GPIO_registers, "GPIO");        //Set our GPIO values
