@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM more robust 16:9 anamorphic preset. Preview get stuck due to too much height before)
+crop_rec.c:(EOSM added bilals latest sd_uhs patch)
