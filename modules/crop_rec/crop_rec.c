@@ -3728,13 +3728,13 @@ static inline uint32_t reg_override_3K_eosm(uint32_t reg, uint32_t old_val)
     }
     if (ratios == 0x1 && set_25fps)
     {
-        EngDrvOutLV(0xC0F38024, 0x45302cd);
+        EngDrvOutLV(0xC0F38024, 0x45302ff);
         switch (reg)
         {
                 /* will change to 24fps for continous action 2.39:1 */
-            case 0xC0F06804: return 0x4c302de + reg_6804_width + (reg_6804_height << 16);
-            case 0xC0F0713c: return 0x4c3 + reg_713c;
-            case 0xC0F07150: return 0x4a4 + reg_7150;
+            case 0xC0F06804: return 0x5190310 + reg_6804_width + (reg_6804_height << 16);
+            case 0xC0F0713c: return 0x519 + reg_713c;
+            case 0xC0F07150: return 0x514 + reg_7150;
             case 0xC0F06014: return 0x5ec + reg_6014;
             case 0xC0F06824: return 0x3ca;
             case 0xC0F06828: return 0x3ca;
