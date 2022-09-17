@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM sd_uhs optimized patch from bilal)
+crop_rec.c:(EOSM turn off sdr 104 mode if sd card becomes slow)

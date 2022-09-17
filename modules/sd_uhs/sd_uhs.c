@@ -28,6 +28,8 @@ static uint32_t sdr_240MHz[]     = {        0x3,        0x3,                    
 static uint32_t uhs_vals[COUNT(uhs_regs)];  /* current values */
 static int sd_setup_mode_enable = 0;
 static CONFIG_INT("sd.sd_overclock", sd_overclock, 3);
+static CONFIG_INT("sd.sd_access_mode", access_mode, 1);
+
 
 /* start of the function */
 static void sd_setup_mode_log(uint32_t* regs, uint32_t* stack, uint32_t pc)
@@ -131,8 +133,11 @@ static void sd_overclock_task()
     patch_hook_function(sd_setup_mode_in, MEM(sd_setup_mode_in), sd_setup_mode_in_log, "SD UHS");
     
     /* enable SDR104 */
+    if (access_mode)
+    {
         patch_hook_function(sd_set_function, MEM(sd_set_function), sd_set_function_log, "SDR104");
-        SD_ReConfiguration();
+    }
+    SD_ReConfiguration();
     
     patch_instruction(0xff339200, 0xe3550001, 0xe3550008, "GPIO_cmp");   //Patch cmp instruction to avoid loading default GPIO registers values
     patch_hook_function(GPIO, MEM(GPIO), GPIO_registers, "GPIO");        //Set our GPIO values
@@ -171,9 +176,21 @@ static struct menu_entry sd_uhs_menu[] =
         .choices = CHOICES("OFF", "160MHz", "192MHz", "240MHz"),
         .help   = "Select a patch and restart camera. Disable with OFF and restart",
         .help2  = "Proven working with 95Mb/s and 170Mb/s cards",
+        .children =  (struct menu_entry[]) {
+            {
+                .name       = "Access Mode",
+                .priv       = &access_mode,
+                .max        = 1,
+                .choices    = CHOICES("SDR50", "SDR104"),
+                .help       = "SDR104 mode is required for higher frequencies than 100 MHz. It's ON by",
+                .help2      = "default. However some SD cards prefer SDR50 for high frequencies.",
+            },
+            MENU_EOL,
+        },
     }
 };
 
+/* skip debug access ais it is overly complex atm
 static struct menu_entry sd_uhs_menu1[] =
 {
     {
@@ -185,6 +202,7 @@ static struct menu_entry sd_uhs_menu1[] =
         .help2  = "Proven working with 95Mb/s and 170Mb/s cards",
     }
 };
+ */
 
 static unsigned int sd_uhs_init()
 {
@@ -212,7 +230,7 @@ static unsigned int sd_uhs_init()
     }
     
     menu_add("Movie", sd_uhs_menu, COUNT(sd_uhs_menu));
-    menu_add("Debug", sd_uhs_menu1, COUNT(sd_uhs_menu1));
+   // menu_add("Debug", sd_uhs_menu, COUNT(sd_uhs_menu));
     
     return 0;
 }
@@ -229,6 +247,7 @@ MODULE_INFO_END()
 
 MODULE_CONFIGS_START()
 MODULE_CONFIG(sd_overclock)
+MODULE_CONFIG(access_mode)
 MODULE_CONFIGS_END()
 
 
