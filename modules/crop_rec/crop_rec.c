@@ -980,6 +980,16 @@ static inline void FAST calc_skip_offsets(int * p_skip_left, int * p_skip_right,
                 skip_left       = 372;
                 skip_right      = 358;
             }
+            if (ratios == 1 && set_25fps)
+            {
+                skip_left       = 106;
+                skip_right      = 92;
+            }
+            if (ratios == 2 && set_25fps)
+            {
+                skip_left       = 106;
+                skip_right      = 92;
+            }
                 break;
 
         case CROP_PRESET_anamorphic_rewired_100D:
@@ -1509,7 +1519,7 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
                 if (!ratios && !set_25fps) cmos_new[7] = 0x1;
                 if (!ratios && set_25fps) cmos_new[7] = 0x325;
                 if (!ratios && set_25fps && lv_dispsize == 10) cmos_new[7] = 0x2a0;
-                if (ratios == 1 || ratios == 2) cmos_new[7] = 0x6;
+                if (ratios == 1 || ratios == 2) cmos_new[7] = 0x8;
                 if (ratios == 3) cmos_new[7] = 0xf20;
                 if (set_25fps && (ratios == 1 || ratios == 2)) cmos_new[7] = 0x808;
                 break;
@@ -4474,7 +4484,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
         {
             case 0xC0F06804: return 0xcd701e4 + reg_6804_width + (reg_6804_height << 16);
 
-            case 0xC0F06014: return 0xeed + reg_6014 + flvtl*2000;
+            case 0xC0F06014: return 0xeed + reg_6014 + flvtl*2000 + reg_6014;
             case 0xC0F0600c: return 0x2550255 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return 0x2550255 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return 0x255 + reg_6008;
@@ -4506,9 +4516,10 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0f0b13c: return 0x11;
         }
     }
-
+    
+    
     //silent film modes 2.39:1 20fps
-    if (ratios == 1)
+    if (ratios == 1 && !set_25fps)
     {
         /* full readout */
         switch (reg)
@@ -4516,10 +4527,10 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0x8a301e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
-            case 0xC0F06014: return set_25fps ? 0xbca - 442: 0xbca + flvtl*2000;
-            case 0xC0F0600c: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06008: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06010: return set_25fps ? 0x211 - 12 + reg_6008: 0x211 + reg_6008;
+            case 0xC0F06014: return 0xbca + flvtl*2000;
+            case 0xC0F0600c: return 0x2110211 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2110211 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x211 + reg_6008;
 
             case 0xC0F0713c: return 0x8a8 + reg_713c;
 
@@ -4528,8 +4539,29 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
         }
     }
 
+    //silent film modes 2.39:1 24fps
+    if (ratios == 1 && set_25fps)
+    {
+        /* full readout */
+        switch (reg)
+        {
+            case 0xC0F06804: return 0x84701e4 + reg_6804_width + (reg_6804_height << 16);
+
+                //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
+            case 0xC0F06014: return 0xa03 + flvtl*2000 + reg_6014;
+            case 0xC0F0600c: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x207 + reg_6008;
+
+            case 0xC0F0713c: return 0x847 + reg_713c;
+
+                /* dummy reg for height modes eosm in raw.c */
+            case 0xC0f0b13c: return 0x11;
+        }
+    }
+
     //silent film modes 2.35:1 20fps
-    if (ratios == 2)
+    if (ratios == 2 && !set_25fps)
     {
         /* full readout */
         switch (reg)
@@ -4537,10 +4569,10 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0x8c701e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
-            case 0xC0F06014: return set_25fps ? 0xbca - 442: 0xbca + flvtl*2000;
-            case 0xC0F0600c: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06008: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06010: return set_25fps ? 0x211 - 12 + reg_6008: 0x211 + reg_6008;
+            case 0xC0F06014: return 0xbca + flvtl*2000 + reg_6014;
+            case 0xC0F0600c: return 0x2110211 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2110211 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x211 + reg_6008;
 
             case 0xC0F0713c: return 0x8cc + reg_713c;
 
@@ -4548,6 +4580,28 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0f0b13c: return 0x11;
         }
     }
+    
+    //silent film modes 2.35:1 24fps
+    if (ratios == 2 && set_25fps)
+    {
+        /* full readout */
+        switch (reg)
+        {
+            case 0xC0F06804: return 0x86b01e4 + reg_6804_width + (reg_6804_height << 16);
+
+                //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
+            case 0xC0F06014: return 0xa03 + flvtl*2000 + reg_6014;
+            case 0xC0F0600c: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x207 + reg_6008;
+
+            case 0xC0F0713c: return 0x86b + reg_713c;
+
+                /* dummy reg for height modes eosm in raw.c */
+            case 0xC0f0b13c: return 0x11;
+        }
+    }
+
 
     //silent film modes 16:9 16fps
     if (ratios == 3)
@@ -4558,7 +4612,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0xb9101e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
-            case 0xC0F06014: return set_25fps ? 0xd77 - 30 + reg_6014: 0xd77 + flvtl*2000;
+            case 0xC0F06014: return set_25fps ? 0xd77 - 30 + reg_6014: 0xd77 + flvtl*2000 + reg_6014;
             case 0xC0F0600c: return set_25fps ? 0x2430243 - 60 + reg_6008 + (reg_6008 << 16): 0x2430243 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return set_25fps ? 0x2430243 - 60 + reg_6008 + (reg_6008 << 16): 0x2430243 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return set_25fps ? 0x243 - 60 + reg_6008: 0x243 + reg_6008;

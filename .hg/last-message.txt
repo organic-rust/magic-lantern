@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM turn off sdr 104 mode if sd card becomes slow)
+crop_rec.c:(EOSM fps increase 5anamorphic flv presets)
