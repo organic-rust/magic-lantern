@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fps increase 5anamorphic flv presets)
+crop_rec.c:(EOSM reverting from last commits)
