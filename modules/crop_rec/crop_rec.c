@@ -631,7 +631,7 @@ static inline void FAST calc_skip_offsets(int * p_skip_left, int * p_skip_right,
                 skip_top        = 28;
                 skip_bottom     = 26;
             }
-            if (ratios == 0x3)
+            if (ratios == 0x3 || !ratios)
             {
                 skip_left       = 80;
                 skip_right      = 8;
@@ -980,19 +980,6 @@ static inline void FAST calc_skip_offsets(int * p_skip_left, int * p_skip_right,
                 skip_left       = 372;
                 skip_right      = 358;
             }
-        /* for increased fps. Buggy. Keep for later work
-            if (ratios == 1 && set_25fps)
-            {
-                skip_left       = 106;
-                skip_right      = 92;
-            }
-            if (ratios == 2 && set_25fps)
-            {
-                skip_left       = 106;
-                skip_right      = 92;
-            }
-         */
-
                 break;
 
         case CROP_PRESET_anamorphic_rewired_100D:
@@ -1523,7 +1510,6 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
                 if (!ratios && set_25fps) cmos_new[7] = 0x325;
                 if (!ratios && set_25fps && lv_dispsize == 10) cmos_new[7] = 0x2a0;
                 if (ratios == 1 || ratios == 2) cmos_new[7] = 0x6;
-               // if (ratios == 1 || ratios == 2) cmos_new[7] = 0x6; //for increased fps. Buggy. Keep for later work
                 if (ratios == 3) cmos_new[7] = 0xf20;
                 if (set_25fps && (ratios == 1 || ratios == 2)) cmos_new[7] = 0x808;
                 break;
@@ -1541,8 +1527,10 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
                 }
             if (!ratios)
             {
-                cmos_new[5] = 0x160;             /* vertical (first|last) */
-                cmos_new[7] = 0xB06;            /* horizontal offset (mask 0xFF0) */
+                cmos_new[5] = 0x20;             /* vertical (first|last) */
+                cmos_new[7] = 0xB87;            /* horizontal offset (mask 0xFF0) */
+                //cmos_new[5] = 0x160;             /* vertical (first|last) */
+                //cmos_new[7] = 0xB06;            /* horizontal offset (mask 0xFF0) */
             }
                 if (lv_dispsize == 10)
                 {
@@ -4583,50 +4571,6 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0f0b13c: return 0x11;
         }
     }
-    
-    
- /*  for increased fps. Buggy. Keep for later work
-    //silent film modes 2.35:1 20fps
-    if (ratios == 2 && !set_25fps)
-    {
-        switch (reg)
-        {
-            case 0xC0F06804: return 0x8c701e4 + reg_6804_width + (reg_6804_height << 16);
-
-                //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
-            case 0xC0F06014: return 0xbca + flvtl*2000 + reg_6014;
-            case 0xC0F0600c: return 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06008: return 0x2110211 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06010: return 0x211 + reg_6008;
-
-            case 0xC0F0713c: return 0x8cc + reg_713c;
-
-            case 0xC0f0b13c: return 0x11;
-        }
-    }
-    
-    //silent film modes 2.35:1 24fps
-    if (ratios == 2 && set_25fps)
-    {
-        switch (reg)
-        {
-            case 0xC0F06804: return 0x86b01e4 + reg_6804_width + (reg_6804_height << 16);
-
-                //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014;
-            case 0xC0F06014: return 0xa03 + flvtl*2000 + reg_6014;
-            case 0xC0F0600c: return 0x2070207 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06008: return 0x2070207 + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06010: return 0x207 + reg_6008;
-
-            case 0xC0F0713c: return 0x86b + reg_713c;
-
-            case 0xC0f0b13c: return 0x11;
-        }
-    }
-*/
-    
-    
-
 
     return reg_override_bits(reg, old_val);
 }
@@ -4675,6 +4619,19 @@ if (ratios == 1 || ratios == 2)
 
 if (!ratios)
 {
+    //maximize 1736x2178
+    EngDrvOutLV(0xC0F38024, 0x45301c7);
+    switch (reg)
+    {
+        case 0xC0F06804: return 0x89e01d8 + reg_6804_width + (reg_6804_height << 16);
+        case 0xC0F06014: return 0x9fc + reg_6014;
+        case 0xC0F0600c: return 0x2090209 + reg_6008 + (reg_6008 << 16);
+        case 0xC0F06008: return 0x2090209 + reg_6008 + (reg_6008 << 16);
+        case 0xC0F06010: return 0x209 + reg_6008;
+        case 0xC0F0713c: return 0x89e + reg_713c;
+    }
+    
+    /* pause this for 1736x2178
     switch (reg)
     {
         case 0xC0F06804: return 0x7ec0176 + reg_6804_width + (reg_6804_height << 16);
@@ -4684,6 +4641,7 @@ if (!ratios)
         case 0xC0F06010: return 0x205 + reg_6008;
         case 0xC0F0713c: return 0x7ec + reg_713c;
     }
+     */
 }
 
     switch (reg)
@@ -4814,6 +4772,7 @@ if (!ratios)
 
     }
 
+    /* pausing
     if (!ratios)
     {
         if (!zoom || shamem_read(0xC0F14224) == 0x77F077F)
@@ -4878,6 +4837,7 @@ if (!ratios)
         }
 
     }
+     */
 
     return reg_override_bits(reg, old_val);
 }
@@ -6071,6 +6031,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
     }
 
+    /*
     if (!ratios)
     {
 
@@ -6132,6 +6093,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         }
 
     }
+     */
     
 }
 

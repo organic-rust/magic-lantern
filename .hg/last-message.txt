@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reverting from last commits)
+crop_rec.c:(EOSM adding 1736x2178 anamorphic 24fps)
