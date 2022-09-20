@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM adding 1736x2178 anamorphic 24fps)
+crop_rec.c:(EOSM fix true 1736)

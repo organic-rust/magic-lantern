@@ -631,10 +631,15 @@ static inline void FAST calc_skip_offsets(int * p_skip_left, int * p_skip_right,
                 skip_top        = 28;
                 skip_bottom     = 26;
             }
-            if (ratios == 0x3 || !ratios)
+            if (ratios == 0x3)
             {
                 skip_left       = 80;
                 skip_right      = 8;
+            }
+            if (!ratios)
+            {
+                skip_left       = 72;
+                skip_right      = 0;
             }
             break;
 
@@ -1517,7 +1522,7 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
             case CROP_PRESET_Anamorphic_EOSM_frtp:
             if (ratios == 3)
             {
-                cmos_new[5] = 0x1A0;             /* vertical (first|last) */
+                cmos_new[5] = 0x1A1;             /* vertical (first|last) */
                 cmos_new[7] = 0xB87;            /* horizontal offset (mask 0xFF0) */
             }
                 if (ratios == 1 || ratios == 2)
