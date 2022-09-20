@@ -1522,7 +1522,7 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
             case CROP_PRESET_Anamorphic_EOSM_frtp:
             if (ratios == 3)
             {
-                cmos_new[5] = 0x1A1;             /* vertical (first|last) */
+                cmos_new[5] = 0x1A0;             /* vertical (first|last) */
                 cmos_new[7] = 0xB87;            /* horizontal offset (mask 0xFF0) */
             }
                 if (ratios == 1 || ratios == 2)
@@ -4625,10 +4625,10 @@ if (ratios == 1 || ratios == 2)
 if (!ratios)
 {
     //maximize 1736x2178
-    EngDrvOutLV(0xC0F38024, 0x45301c7);
+    EngDrvOutLV(0xC0F38024, 0x45301c3);
     switch (reg)
     {
-        case 0xC0F06804: return 0x89e01d8 + reg_6804_width + (reg_6804_height << 16);
+        case 0xC0F06804: return 0x89e01d4 + reg_6804_width + (reg_6804_height << 16);
         case 0xC0F06014: return 0x9fc + reg_6014;
         case 0xC0F0600c: return 0x2090209 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06008: return 0x2090209 + reg_6008 + (reg_6008 << 16);
