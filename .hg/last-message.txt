@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fixing again 1736)
+crop_rec.c:(EOSM adding 1 pixel to height Anamorphic frt 1736x2178)

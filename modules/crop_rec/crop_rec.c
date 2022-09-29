@@ -4628,12 +4628,12 @@ if (!ratios)
     EngDrvOutLV(0xC0F38024, 0x45301c3);
     switch (reg)
     {
-        case 0xC0F06804: return 0x89e01d4 + reg_6804_width + (reg_6804_height << 16);
+        case 0xC0F06804: return 0x89f01d4 + reg_6804_width + (reg_6804_height << 16);
         case 0xC0F06014: return 0x9fc + reg_6014;
         case 0xC0F0600c: return 0x2090209 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06008: return 0x2090209 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06010: return 0x209 + reg_6008;
-        case 0xC0F0713c: return 0x89e + reg_713c;
+        case 0xC0F0713c: return 0x89f + reg_713c;
     }
     
     /* pause this for 1736x2178
