@@ -4625,8 +4625,14 @@ if (ratios == 1 || ratios == 2)
 
 if (!ratios)
 {
-    //maximize 1736x2178
+
+    //Preview working in x3 zoom
     EngDrvOutLV(0xC0F38024, 0x45301c3);
+    //Unskew anamorphic preview
+    EngDrvOutLV(0xc0f11A88, 0x1);
+    EngDrvOutLV(0xc0f11A8C, 0x1E002B);
+    
+    //maximize 1736x2178
     switch (reg)
     {
         case 0xC0F06804: return 0x89f01d4 + reg_6804_width + (reg_6804_height << 16);

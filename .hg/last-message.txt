@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM skipping reduce fps while previewing x10 ananmorphic frtp. Affects brithness)
+crop_rec.c:(EOSM 1736x2178 mode Anamorphic preview fix, a little better)
