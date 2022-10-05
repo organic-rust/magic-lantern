@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM adding 1 pixel to height Anamorphic frt 1736x2178)
+crop_rec.c:(EOSM skipping reduce fps while previewing x10 ananmorphic frtp. Affects brithness)

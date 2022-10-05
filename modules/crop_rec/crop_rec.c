@@ -4585,8 +4585,8 @@ static inline uint32_t reg_override_anamorphic_eosm_frtp(uint32_t reg, uint32_t 
         //disable zoom function while not recording and using tap display
         if (gui_menu_shown()) zoom = 0;
     
-      //x10zoom fixes bug where regs are stuck
-      if (lv_dispsize == 10)
+      //x10zoom fixes bug where regs are stuck// Skipping this for now. Affects brightness
+     /* if (lv_dispsize == 10)
       {
           zoom = 0;
           if (ratios == 3) *(volatile uint32_t*)0xC0F06014 = 0xa2e;
@@ -4594,6 +4594,7 @@ static inline uint32_t reg_override_anamorphic_eosm_frtp(uint32_t reg, uint32_t 
           if (!ratios) *(volatile uint32_t*)0xC0F06014 = 0xa10;
           return 0;
       }
+      */
                 
 
 if (ratios == 3)
