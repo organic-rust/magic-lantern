@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 1736x2178 mode Anamorphic preview fix, a little better)
+crop_rec.c:(EOSM modify fps by entering a submenu in set_25fps)
