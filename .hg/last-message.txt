@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM snappier x10 zoom coming from x5 crop presets)
+crop_rec.c:(EOSM testing stability arounf 5k frtp preset)

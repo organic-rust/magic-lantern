@@ -7581,13 +7581,14 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
          (CROP_PRESET_MENU == CROP_PRESET_1080K_100D) ||
          (CROP_PRESET_MENU == CROP_PRESET_CENTER_Z)) && lv_dispsize == 1)
     {
-        info_led_on();
-        gui_uilock(UILOCK_EVERYTHING);
-        int old_zoom = lv_dispsize;
-        set_zoom(lv_dispsize == 1 ? 5 : 1);
-        set_zoom(old_zoom);
-        gui_uilock(UILOCK_NONE);
-        info_led_off();
+        unpatch_memory(ENGIO_WRITE);
+        unpatch_memory(CMOS_WRITE);
+        unpatch_memory(ADTG_WRITE);
+        update_patch();
+        patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
+        patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
+        patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
+        update_patch();
         set_lv_zoom(5);
         if (CROP_PRESET_MENU == CROP_PRESET_2K_EOSM)
         {
