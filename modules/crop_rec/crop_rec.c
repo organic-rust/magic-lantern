@@ -7424,10 +7424,16 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                 }
                 else
                 {
-                    display_off();
-                    msleep(400);
-                    display_on();
-                    ResumeLiveView();
+                    patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
+                    patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
+                    patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
+                    
+                    /* older routine
+                     display_off();
+                     msleep(400);
+                     display_on();
+                     ResumeLiveView();
+                     */
                     set_lv_zoom(1);
                 }
             }
