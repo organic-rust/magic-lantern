@@ -7349,16 +7349,19 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                    // display_on();
                    // ResumeLiveView();
                 }
-                if (zoomaid) set_lv_zoom(10);
+                if (zoomaid)
+                {
+                    unpatch_memory(ENGIO_WRITE);
+                    unpatch_memory(CMOS_WRITE);
+                    unpatch_memory(ADTG_WRITE);
+                    update_patch();
+                    set_zoom(10);
+                }
             }
             else
             {
                 if (crop_preset == CROP_PRESET_x10_EOSM) movie_crop_hack_disable();
                 /* fixes interference with autoiso(replacing PauseLiveView();) */
-                display_off();
-                msleep(300);
-                display_on();
-                ResumeLiveView();
                 if (zoomaid) set_lv_zoom(10);
             }
             crop_patch2 = 1;
@@ -7413,11 +7416,11 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                     CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp ||
                     CROP_PRESET_MENU == CROP_PRESET_4K_EOSM)
                 {
-                    display_off();
-                    msleep(400);
-                    display_on();
-                    ResumeLiveView();
-                    set_lv_zoom(5);
+                    patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
+                    patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
+                    patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
+                    update_patch();
+                    set_zoom(5);
                 }
                 else
                 {
@@ -7431,9 +7434,10 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
             else
             {
                 if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_EOSM || CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_flv_EOSM || CROP_PRESET_MENU == CROP_PRESET_mcm_mv1080_EOSM ||
-                    CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D) movie_crop_hack_enable();
-                PauseLiveView();
-                ResumeLiveView();
+                    CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
+                    movie_crop_hack_enable();
+                    PauseLiveView();
+                    ResumeLiveView();
             }
             if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
             /* 100D is a stubborn thing, needs an extra round */

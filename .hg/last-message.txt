@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM modify fps by entering a submenu in set_25fps)
+crop_rec.c:(EOSM snappier x10 zoom coming from x5 crop presets)
