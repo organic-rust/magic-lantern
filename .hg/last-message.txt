@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM bug fixed when zooming with higher frame rates)
+crop_rec.c:(EOSM start off in 14bit 5k anamorphic mode)
