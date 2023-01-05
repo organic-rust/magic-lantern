@@ -2146,12 +2146,13 @@ else
 }
 */
 
+/* Skipping this for faster zoomaid functionb in crop_rec.c
 if ((cam_eos_m || cam_100d) && crop_patch && lv_dispsize != 10)
 {
      crop_patch = 0;
      PauseLiveView(); 
      ResumeLiveView();
-    /* disabling early settles regs for mlv_play, well needs testing for reliabilty */
+    // disabling early settles regs for mlv_play, well needs testing for reliabilty
      movie_crop_hack_disable();
 }
     
@@ -2159,6 +2160,7 @@ if ((cam_eos_m || cam_100d) && crop_patch && lv_dispsize != 10)
     {
         crop_patch = 1;
     }
+*/
 
 /* replace bmp_off and bmp_on with below. Might work better regarding corrupted frames when using PREVIEW_ML
     	    static bool once = false;

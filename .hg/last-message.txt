@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM start off in 14bit 5k anamorphic mode)
+mlv_lite.c:(EOSM erasing obsolete code to speed up zoomaid)
