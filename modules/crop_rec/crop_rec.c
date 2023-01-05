@@ -6574,7 +6574,7 @@ static int crop_rec_needs_lv_refresh()
 
         if (presets == 0x2)
         {
-            NotifyBox(2000, "5k anamorphic frtp 12bit");
+            NotifyBox(2000, "5k anamorphic frtp 14bit");
             movie_crop_hack_disable();
             msleep(100);
             crop_preset_index = 12;
