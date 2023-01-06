@@ -1,1 +1,1 @@
-crop_rwec.c:(EOSM typo)
+crop_rec.c:(putting back code x10 zoom HD1080p. More stable now)
