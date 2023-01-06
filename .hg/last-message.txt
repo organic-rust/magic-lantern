@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM HD1080 not refreshing liveview x10 zoom going back to x1)
+crop_rec.c:(EOSM 40fps possible 16:9)

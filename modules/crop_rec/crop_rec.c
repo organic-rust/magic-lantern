@@ -264,7 +264,7 @@ static enum crop_preset crop_presets_eosm[] = {
 
 static const char * crop_choices_eosm[] = {
     "HD 1080p",
-    "HD 1080p 30/46/38fps",
+    "HD 1080p 30/46/40fps",
     //"mv1080p 1736x1158",
     //"mv720p 1736x694 50fps",
     "2.5K 1:1 centered",
@@ -4315,11 +4315,11 @@ if (shamem_read(0xC0F14224) != 0x77F077F && RECORDING)
             case 0xC0F07150: return 0x3dc + reg_7150;
 
                 /* 38 fps continuous */
-            case 0xC0F06014: return 0x617 + reg_6014 - fps_override;
+            case 0xC0F06014: return 0x602 + reg_6014 - fps_override;
 
-            case 0xC0F0600c: return 0x21b021b + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06008: return 0x21b021b + reg_6008 + (reg_6008 << 16);
-            case 0xC0F06010: return 0x21b + reg_6008;
+            case 0xC0F0600c: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2070207 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x207 + reg_6008;
 
                 /* dummy reg for height modes eosm in raw.c */
             case 0xC0f0b13c: return 0xb;
@@ -7867,7 +7867,7 @@ static LVINFO_UPDATE_FUNC(crop_info)
     {
         if (ratios == 0x0) snprintf(buffer, sizeof(buffer), "HD 1080p 30fps");
         if (ratios == 0x1 || ratios == 0x2) snprintf(buffer, sizeof(buffer), "HD 1080p 48fps");
-        if (ratios == 0x3) snprintf(buffer, sizeof(buffer), "HD 1080p 38fps");
+        if (ratios == 0x3) snprintf(buffer, sizeof(buffer), "HD 1080p 40fps");
         if ((ratios == 0x1 || ratios == 0x2) && set_25fps == 0x1) snprintf(buffer, sizeof(buffer), "HD 1080p 46fps");
     }
 
