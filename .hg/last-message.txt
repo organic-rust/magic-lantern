@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM skipping update_patch seems better)
+crop_rec.c:(EOSM add patch hook routine for 5k frtp)
