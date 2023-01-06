@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 40fps possible 16:9)
+crop_rec.c:(EOSM skipping update_patch seems better)

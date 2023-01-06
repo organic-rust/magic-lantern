@@ -7351,10 +7351,11 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                 }
                 if (zoomaid)
                 {
-                    unpatch_memory(ENGIO_WRITE);
-                    unpatch_memory(CMOS_WRITE);
-                    unpatch_memory(ADTG_WRITE);
-                    update_patch();
+                    //Seems not needed
+                    //unpatch_memory(ENGIO_WRITE);
+                    //unpatch_memory(CMOS_WRITE);
+                    //unpatch_memory(ADTG_WRITE);
+                    //update_patch();
                     set_zoom(10);
                 }
             }
@@ -7420,17 +7421,19 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                     CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp ||
                     CROP_PRESET_MENU == CROP_PRESET_4K_EOSM)
                 {
-                    patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
-                    patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
-                    patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
-                    update_patch();
+                    //Seems working without patch routine
+                   // patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
+                   // patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
+                   // patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
+                   // update_patch();
                     set_zoom(5);
                 }
                 else
                 {
-                    patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
-                    patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
-                    patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
+                    //Seems working without patch routine
+                   // patch_hook_function(CMOS_WRITE, MEM_CMOS_WRITE, &cmos_hook, "crop_rec: CMOS[1,2,6] parameters hook");
+                   // patch_hook_function(ADTG_WRITE, MEM_ADTG_WRITE, &adtg_hook, "crop_rec: ADTG[8000,8806] parameters hook");
+                   // patch_hook_function(ENGIO_WRITE, MEM_ENGIO_WRITE, engio_write_hook, "crop_rec: video timers hook");
                     
                     /* older routine
                      display_off();
