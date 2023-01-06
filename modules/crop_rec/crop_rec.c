@@ -7446,8 +7446,9 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                 if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_EOSM || CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_flv_EOSM || CROP_PRESET_MENU == CROP_PRESET_mcm_mv1080_EOSM ||
                     CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
                     movie_crop_hack_enable();
-                    PauseLiveView();
-                    ResumeLiveView();
+                //pausing this on the way back from HD1080p. No black frame
+                   // PauseLiveView();
+                   // ResumeLiveView();
             }
             if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
             /* 100D is a stubborn thing, needs an extra round */

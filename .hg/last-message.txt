@@ -1,1 +1,1 @@
-crop_rec.c:(putting back code x10 zoom HD1080p. More stable now)
+crop_rec.c:(EOSM HD1080 not refreshing liveview x10 zoom going back to x1)
