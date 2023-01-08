@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM add patch hook routine for 5k frtp)
+crop_rec.c:(EOSM zoom with halfshiutteranamorphic release when release button)

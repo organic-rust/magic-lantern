@@ -5911,9 +5911,19 @@ if (shutteraverage)
     
     
     //workaround using halfshutter for zooming
+    /*
     if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && set)
     {
         key = MODULE_KEY_UNPRESS_SET;
+    }
+     */ //Pause this. Works like sticky zoom but not good if we use autofocus
+    
+    //Resets the preview zoom when releasing halfshutter. Better for when using autofocus
+    if (!get_halfshutter_pressed() && zoom)
+    {
+        zoom = 0;
+        key = MODULE_KEY_UNPRESS_SET;
+        msleep(400);
     }
 
     
@@ -5928,12 +5938,13 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 {
 
     //Use SET button instead of halfshutter to zoom
-    if (key == MODULE_KEY_PRESS_SET && zoom)
+   /* if (key == MODULE_KEY_PRESS_SET && zoom)
     {
         zoom = 0;
         key = MODULE_KEY_UNPRESS_SET;
         msleep(400);
     }
+    */ //Pause this. Works like sticky zoom but not good if we use autofocus
     
     if (!lv) return 0;
 
