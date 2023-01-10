@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM start 2.8k in 12bit)
+crop_rec.c:(EOSM autofocus when zoomaid is set to OFF)

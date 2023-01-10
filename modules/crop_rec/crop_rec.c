@@ -4057,7 +4057,7 @@ static inline uint32_t reg_override_mcm_mv1080_eosm(uint32_t reg, uint32_t old_v
     EngDrvOutLV(0xc0f383dc, 0x42401c6);
 
     //zoom function while recording
-  if (shamem_read(0xC0F14224) != 0x77F077F && RECORDING)
+  if (shamem_read(0xC0F14224) != 0x77F077F && (RECORDING || !zoomaid))
   {
 
     if (get_halfshutter_pressed())
@@ -4199,7 +4199,7 @@ static inline uint32_t reg_override_3x3_48fps_eosm(uint32_t reg, uint32_t old_va
     if (gui_menu_shown() && !RECORDING) *(volatile uint32_t*)0xC0F06014 = 0x643;
 
     // zoom function while recording
-if (shamem_read(0xC0F14224) != 0x77F077F && RECORDING)
+if (shamem_read(0xC0F14224) != 0x77F077F && (RECORDING || !zoomaid))
 {
 
     if (get_halfshutter_pressed())
@@ -5928,6 +5928,12 @@ if (shutteraverage)
 
     
     if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
+    {
+        key = MODULE_KEY_PRESS_SET;
+    }
+    
+    //If zoomaid is turned off
+    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
     {
         key = MODULE_KEY_PRESS_SET;
     }
