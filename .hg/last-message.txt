@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM sticky zoom and then autofocus works for some presets)
+crop_rec.c:(EOSM start 2.8k in 12bit)
