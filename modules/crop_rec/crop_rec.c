@@ -7362,6 +7362,19 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
                 }
                 if (zoomaid)
                 {
+                    
+                    //Resets the preview zoom when releasing halfshutter. Better for when using autofocus
+                    if (zoomaid == 2 && get_halfshutter_pressed() && lv_dispsize != 10)
+                    {
+                    SW1(0,0);
+                    }
+                    
+                    if (zoomaid == 2 && lv_dispsize == 10)
+                    {
+                    SW1(1,0);
+                    }
+                    
+
                     //Seems not needed for other then one preset
                     if (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp)
                     {
