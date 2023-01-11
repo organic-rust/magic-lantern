@@ -365,13 +365,13 @@ static int is_supported_mode()
 
     if ((CROP_PRESET_MENU == CROP_PRESET_3K_EOSM || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM || CROP_PRESET_MENU == CROP_PRESET_4K_EOSM || CROP_PRESET_MENU == CROP_PRESET_2K_EOSM || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_hdmi) && is_movie_mode() && get_halfshutter_pressed() && !RECORDING)
     {
-        return 0;
+       if (zoomaid) return 0;
     }
 
     //sticky push feature
     if (zoomaid == 0x2 && lv_dispsize == 10 && !get_halfshutter_pressed() && (CROP_PRESET_MENU == CROP_PRESET_3K_EOSM || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM || CROP_PRESET_MENU == CROP_PRESET_4K_EOSM || CROP_PRESET_MENU == CROP_PRESET_2K_EOSM || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_hdmi) && is_movie_mode())
     {
-        return 0;
+        if (zoomaid) return 0;
     }
 
     //To be able taking photos while in movie mode. Will not work with isoauto or sticky push
@@ -1421,11 +1421,11 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
                // {
                  //   return;
                // }
-                cmos_new[5] = 0x280;             /* vertical (first|last) */
+                cmos_new[5] = 0x300;             /* vertical (first|last) */
                 cmos_new[7] = 0xaa9;            /* horizontal offset (mask 0xFF0) */
                 if (ratios == 0x3)
                 {
-                    cmos_new[5] = 0x200;            /* vertical (first|last) */
+                    cmos_new[5] = 0x300;            /* vertical (first|last) */
                     cmos_new[7] = 0xf20;
                 }
                 break;

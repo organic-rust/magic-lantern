@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM autofocus when zoomaid is set to OFF)
+crop_rec.c:(EOSM stability fixes for other ratios but 16:9 when prefocusing. cmos fix 3k preset. Same issue like 2.8 before when using af)
