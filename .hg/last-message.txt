@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM stability fixes for other ratios but 16:9 when prefocusing. cmos fix 3k preset. Same issue like 2.8 before when using af)
+crop_rec.c:(EOSM refresh liveview when autofocus and !zoomaid or second recording will fail)

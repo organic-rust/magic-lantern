@@ -5904,9 +5904,16 @@ if (shutteraverage)
 
 
     //Reset zoom when stopping recording
-    if (key == MODULE_KEY_REC && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp)
+    if (key == MODULE_KEY_REC && RECORDING && (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp))
     {
         zoom = 0;
+        
+        //When autofocus is used we need to refresh liveview or af will fail on second recording. Not perfect and even sticky shutter needs refreshing like this but it refreshes when in x10zoom already.
+        if (!zoomaid)
+        {
+        PauseLiveView();
+        ResumeLiveView();
+        }
     }
     
     
