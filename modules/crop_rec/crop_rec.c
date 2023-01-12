@@ -7205,7 +7205,7 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
     }
 
     /* For when in photo mode and enabled x10 zoom mode */
-    if ((zoomaid && !is_movie_mode()) || (is_5D3 && (!RECORDING && zoomaid)))
+    if ((/*zoomaid &&*/ !is_movie_mode()) || (is_5D3 && (!RECORDING && zoomaid)))
     {
         static int last_hs_photo = 0;
         static int photo = 0;

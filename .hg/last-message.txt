@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM refresh liveview when autofocus and !zoomaid or second recording will fail)
+crop_rec.c:(EOSM zoom with halfshutter while zoomaid turned off, temporary solution)
