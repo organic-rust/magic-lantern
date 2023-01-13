@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 28k routine refresh for better focusing)
+crop_rec.c:(EOSM fix for when changing presets tap display when zzoom aid OFF)

@@ -6593,7 +6593,6 @@ static int crop_rec_needs_lv_refresh()
             release = 0;
             release_b = 0;
             reset_movie_cropmarks();
-            return 0;
         }
 
         if (presets == 0x2)
@@ -6616,7 +6615,6 @@ static int crop_rec_needs_lv_refresh()
             release = 0;
             release_b = 0;
             reset_movie_cropmarks();
-            return 0;
         }
 
         if (presets == 0x3)
@@ -6639,7 +6637,6 @@ static int crop_rec_needs_lv_refresh()
             release = 0;
             release_b = 0;
             reset_movie_cropmarks();
-            return 0;
         }
 
         if (presets == 0x4)
@@ -6661,7 +6658,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0x5)
@@ -6683,7 +6679,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0x6)
@@ -6703,7 +6698,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0x7)
@@ -6726,7 +6720,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0x8)
@@ -6750,7 +6743,6 @@ static int crop_rec_needs_lv_refresh()
             set_lv_zoom(1);
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0x9)
@@ -6772,7 +6764,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         if (presets == 0xa)
@@ -6821,7 +6812,6 @@ static int crop_rec_needs_lv_refresh()
             ResumeLiveView();
             release = 0;
             release_b = 0;
-            return 0;
         }
 
         /* save this for the future. If it´s used...
