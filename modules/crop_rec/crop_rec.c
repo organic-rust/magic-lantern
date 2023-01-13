@@ -43,7 +43,7 @@ static int dualiso = 0;
 /* turn off gain buttons when dualiso is set */
 int dual_iso_is_enabled();
 
-static CONFIG_INT("crop.preset", crop_preset_index, 0);
+static CONFIG_INT("crop.preset", crop_preset_index, 12);
 static CONFIG_INT("crop.shutter_range", shutter_range, 0);
 static CONFIG_INT("crop.fps_override", fps_override, 0);
 static CONFIG_INT("crop.ratios", ratios, 3);

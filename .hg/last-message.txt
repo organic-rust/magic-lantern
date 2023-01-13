@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fix for when changing presets tap display when zzoom aid OFF)
+tweaks.c:(EOSM kill canon gui as starting point)
