@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM zoom with halfshutter while zoomaid turned off, temporary solution)
+p

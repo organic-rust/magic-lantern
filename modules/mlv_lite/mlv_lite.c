@@ -4558,11 +4558,12 @@ static int raw_rec_should_preview(void)
 
     }
 
-    if (autofocusing)
-    {
-        /* disable our preview during autofocus */
-        return 0;
-    }
+    //Will this help with 2.8k preset while autodocusing?
+   // if (autofocusing)
+   // {
+    //    /* disable our preview during autofocus */
+     //   return 0;
+   // }
 
     if (PREVIEW_AUTO)
     {
