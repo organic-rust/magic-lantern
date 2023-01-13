@@ -1,1 +1,1 @@
-p
+crop_rec.c:(EOSM 28k routine refresh for better focusing)

@@ -5904,7 +5904,7 @@ if (shutteraverage)
 
 
     //Reset zoom when stopping recording
-    if (key == MODULE_KEY_REC && RECORDING && (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp))
+    if (key == MODULE_KEY_REC && RECORDING && (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM))
     {
         zoom = 0;
         
