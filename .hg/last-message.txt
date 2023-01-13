@@ -1,1 +1,1 @@
-tweaks.c:(EOSM kill canon gui as starting point)
+crop_rec.c:(EOSM focus fix when in photo mode, disables zoom routine in frtp preset)

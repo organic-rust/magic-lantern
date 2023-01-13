@@ -5940,14 +5940,14 @@ if (shutteraverage)
     }
     
     //If zoomaid is turned off
-    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
+    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && is_movie_mode() && !set)
     {
         key = MODULE_KEY_PRESS_SET;
     }
 
 
 //Need to separate zoom function and put it in crop_rec_keypress_cbr to fix corruption
-if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
+if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && is_movie_mode() && !set)
 {
 
     //Use SET button instead of halfshutter to zoom
