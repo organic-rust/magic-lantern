@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM focus fix when in photo mode, disables zoom routine in frtp preset)
+mlv_lite.c:(Cleaner more_hacks code thanks to theBilalFakhuri)

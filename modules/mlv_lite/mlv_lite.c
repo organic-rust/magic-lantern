@@ -169,7 +169,6 @@ static CONFIG_INT("raw.warm.up", warm_up, 0);
 static CONFIG_INT("raw.use.srm.memory", use_srm_memory, 1);
 static CONFIG_INT("raw.small.hacks", small_hacks, 1);
 static CONFIG_INT("raw.more.hacks", more_hacks, 1);
-/* static CONFIG_INT("raw.one.more.hack", one_more_hack, 0); */
 
 static CONFIG_INT("raw.h264.proxy", h264_proxy_menu, 0);
 static CONFIG_INT("raw.sync_beep", sync_beep, 1);
@@ -2203,6 +2202,10 @@ if ((cam_eos_m || cam_100d) && !get_halfshutter_pressed() && RECORDING && PREVIE
      * so undoing this hack is no longer needed */
 }
 
+static void (*lvfaceEnd)() = 0;
+static void (*aewbSuspend)() = 0;
+static int more_hacks_are_supported = 0;
+
 static REQUIRES(RawRecTask)
 void hack_liveview(int unhack)
 {
@@ -2286,52 +2289,29 @@ void hack_liveview(int unhack)
             }
         }
     }
-}
-
-
-static REQUIRES(RawRecTask)
-void hack_liveview_more()
-{
-    /* Exlude Movie Crop Mode from the new hacks */
-    if (video_mode_crop)
-    {
-        return;
-    }
     
-    if (more_hacks) /* excludes mcm mode on eosm */
+    /*  https://www.magiclantern.fm/forum/index.php?topic=26443.0 */
+    /*    The hacks would be disabled/reset after calling PauseLiveView after stopping RAW video recording */
+        
+    if (more_hacks_are_supported) //Not all of models support these hacks (like 550D/5D2); the functions are not presented in Canon firmware
     {
-        void (*aewbSuspend)() =
-        cam_eos_m   ? 0xff2606f4 :
-        cam_5d3_113 ? 0xff23bc60 :
-        cam_5d3_123 ? 0xff23ff10 :
-        0;
-        
-        void (*lvfaceEnd)() =
-        cam_eos_m   ? 0xff177ff8 :
-        cam_5d3_113 ? 0xff16d77c :
-        cam_5d3_123 ? 0xff16e318 :
-        0;
-        
-        lvfaceEnd();
-        
-        if (more_hacks == 2)
+        if (!video_mode_crop && !use_h264_proxy()) /*  Exlude Movie Crop Mode and H.264 Proxy from these hacks  */
         {
-            aewbSuspend();
+            if (!unhack) /* hack */
+            {
+                if (more_hacks == 1)
+                {
+                    lvfaceEnd();
+                }
+                
+                if (more_hacks == 2)
+                {
+                    lvfaceEnd();
+                    aewbSuspend();
+                }
+            }
         }
-	}
-	
-/* Causes freeze on eosm
-	if (one_more_hack)
-	{
-		void (*CartridgeCancel)() = 
-		cam_eos_m ? 0xffa7e7d8 :
-		cam_5d3_113 ? 0xff17fd68 :
-		cam_5d3_123 ? 0xff181340 :
-		0;
-		CartridgeCancel();
-		msleep(10); 
-	}
-*/
+    }
 }
 
 static REQUIRES(LiveViewTask) FAST
@@ -3547,7 +3527,6 @@ void raw_video_rec_task()
     
     hack_liveview(0);
     liveview_hacked = 1;
-    hack_liveview_more();
 
     /* try a sync beep (not very precise, but better than nothing) */
     if(sync_beep)
@@ -4175,25 +4154,15 @@ static struct menu_entry raw_video_menu[] =
                 .help2  = "Set af on to enable auto focus but loose som overhead.",
                 .advanced = 1,
             },
-	    {
+            {
                 .name = "More hacks",
                 .priv = &more_hacks,
-		.choices = CHOICES("OFF", "lvface", "lvface + aewb"),
+                .choices = CHOICES("OFF", "lvface", "lvface + aewb"),
                 .max = 2,
-                .help  = "Disable lvface and aewb.",
-		.help2 = "aewb locks wb and shutter, issues with shutter fine-tuning crop modes!",
+                .help  = "lvface works with everything",
+                .help2 = "Turn off + aewb if using shutter fine-tuning!",
                 .advanced = 1,
             },
-/*
-	    {
-                .name = "One more hack",
-                .priv = &one_more_hack,
-		.choices = CHOICES("OFF", "ON"),
-                .max = 1,
-                .help  = "CartridgeCancel.",
-                .advanced = 1,
-            },
-*/
             {
                 .name = "Show graph",
                 .priv = &show_graph,
@@ -4440,7 +4409,7 @@ static int raw_rec_should_preview(void)
     /* todo: move these in core, with a proper API */
     static int long_halfshutter_press = 0;
     static int last_hs_unpress = 0;
-    static int autofocusing = 0;
+    //static int autofocusing = 0;
 
 /* fix for stuck realtime preview when wanting framing 
     raw_set_preview_rect(skip_x, skip_y, res_x, res_y, 1);
@@ -4448,7 +4417,7 @@ static int raw_rec_should_preview(void)
 
     if (!get_halfshutter_pressed() || rec_trigger == 3)
     {
-        autofocusing = 0;
+       // autofocusing = 0;
         long_halfshutter_press = 0;
         last_hs_unpress = get_ms_clock();
 /* trying a fix for stuck real time preview(only affects framing) */
@@ -4497,7 +4466,7 @@ static int raw_rec_should_preview(void)
      {
         if (lv_focus_status == 3)
         {
-            autofocusing = 1;
+           // autofocusing = 1;
         }
         if (get_ms_clock() - last_hs_unpress > 800)
         {
@@ -4672,6 +4641,14 @@ static unsigned int raw_rec_init()
 {
     // Always start with RAW enabled after reboot, also when it was turned off last time
     //raw_video_enabled = 1;
+    
+    if (is_camera("EOSM", "2.0.2"))
+    {
+        lvfaceEnd  = (void *) 0xFF177FF8;
+        aewbSuspend = (void *) 0xFF2606F4;
+        more_hacks_are_supported = 1;
+    }
+    
     cam_eos_m = is_camera("EOSM", "2.0.2");
     cam_5d2   = is_camera("5D2",  "2.1.2");
     cam_50d   = is_camera("50D",  "1.0.9");
@@ -4695,7 +4672,7 @@ static unsigned int raw_rec_init()
     {
        raw_video_menu[0].help = "Record RAW video. Press SET to start.";
     }
-
+    
     menu_add("Movie", raw_video_menu, COUNT(raw_video_menu));
 
     /* hack: force proper alignment in menu */
@@ -4766,7 +4743,6 @@ MODULE_CONFIGS_START()
     MODULE_CONFIG(use_srm_memory)
     MODULE_CONFIG(small_hacks)
     MODULE_CONFIG(more_hacks)
-/*    MODULE_CONFIG(one_more_hack)*/
     MODULE_CONFIG(warm_up)
     MODULE_CONFIG(sync_beep)
     MODULE_CONFIG(output_format)
