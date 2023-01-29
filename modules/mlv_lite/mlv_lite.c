@@ -2295,7 +2295,7 @@ void hack_liveview(int unhack)
         
     if (more_hacks_are_supported) //Not all of models support these hacks (like 550D/5D2); the functions are not presented in Canon firmware
     {
-        if (!video_mode_crop && !use_h264_proxy()) /*  Exlude Movie Crop Mode and H.264 Proxy from these hacks  */
+        if (!video_mode_crop) /*  Exlude Movie Crop Mode and H.264 Proxy from these hacks  */
         {
             if (!unhack) /* hack */
             {

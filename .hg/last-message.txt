@@ -1,1 +1,1 @@
-mlv_lite.c:(Cleaner more_hacks code thanks to theBilalFakhuri)
+mlv_lite.c:(EOSM proxy not relevant here)
