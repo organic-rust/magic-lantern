@@ -322,7 +322,8 @@ static unsigned int isoless_refresh(unsigned int ctx)
     int setting_changed = (sig != prev_sig);
     prev_sig = sig;
     
-    if (enabled_lv && setting_changed)
+    //Hack to preview base iso while not recording
+    if ((enabled_lv && setting_changed) || !RECORDING)
     {
         isoless_disable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
         enabled_lv = 0;
@@ -341,7 +342,8 @@ static unsigned int isoless_refresh(unsigned int ctx)
         if (err) { NotifyBox(10000, "ISOless PH err(%d)", err); enabled_ph = 0; }
     }
     
-    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START)
+    //Only enable dualiso when recording
+    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && RECORDING)
     {
         enabled_lv = 1;
         int err = isoless_enable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);

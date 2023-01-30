@@ -1,1 +1,1 @@
-mlv_lite.c:(EOSM proxy not relevant here)
+dual_iso.c:(EOSM preview with dualiso to off while not recording)
