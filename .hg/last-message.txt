@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM preview with dualiso to off while not recording)
+crop_rec.c:(EOSM reworking dualiso with gain buttons. Iso_climb now works when not recoring)

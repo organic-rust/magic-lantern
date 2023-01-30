@@ -6477,6 +6477,8 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         (((is_EOSM && (key == MODULE_KEY_PRESS_DOWN || key == MODULE_KEY_PRESS_UP)) || (is_5D3 && key == MODULE_KEY_INFO) ||
           ((!is_EOSM && !is_5D3) && key == MODULE_KEY_PRESS_SET)) && gain_buttons && HDR_iso_a == 0x0))
     {
+        
+        if (dual_iso_is_enabled() && RECORDING) return 0;
 
         // Increase or decrease exposure with aperture first (for lenses that support it)
         if (lens_info.raw_aperture && lens_info.lens_exists && gain_buttons == 2){
@@ -7138,16 +7140,17 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
     }
 
     /* turn off gain buttons when dualiso is set */
-    if (dual_iso_is_enabled() && !dualiso)
+    //Actually, let´s test to keep isoclimb while not recording for fast acces to recovery dualiso 
+    if (dual_iso_is_enabled() && gain_buttons == 1 && !dualiso && RECORDING)
     {
-        NotifyBox(2000, "dualiso enabled, turning OFF gain buttons");
+        //NotifyBox(2000, "dualiso enabled, turning OFF gain buttons");
         gain_buttons = 0;
         dualiso = 1;
     }
 
-    if (!dual_iso_is_enabled() && dualiso)
+    if (dual_iso_is_enabled() && dualiso && !RECORDING)
     {
-        NotifyBox(2000, "dualiso disabled, turning ON gain buttons");
+        //NotifyBox(2000, "dualiso disabled, turning ON gain buttons");
         gain_buttons = 1;
         dualiso = 0;
     }
