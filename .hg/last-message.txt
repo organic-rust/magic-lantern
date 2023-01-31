@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM start zoomaid in OFF position)
+crop_rec.c(EOSM fix for when changing iso)
