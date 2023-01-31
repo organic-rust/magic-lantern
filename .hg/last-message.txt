@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM start both isos at iso 100)
+crop_rec.c:(EOSM start zoomaid in OFF position)
