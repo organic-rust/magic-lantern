@@ -73,7 +73,7 @@
 #include "../mlv_rec/mlv_rec_interface.h"
 
 static CONFIG_INT("isoless.hdr", isoless_hdr, 0);
-static CONFIG_INT("isoless.iso", isoless_recovery_iso, 3);
+static CONFIG_INT("isoless.iso", isoless_recovery_iso, 0);
 static CONFIG_INT("isoless.alt", isoless_alternate, 0);
 static CONFIG_INT("isoless.prefix", isoless_file_prefix, 0);
 
