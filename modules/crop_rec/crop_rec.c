@@ -21,6 +21,7 @@ extern WEAK_FUNC(ret_0) unsigned int is_crop_hack_supported();
 extern WEAK_FUNC(ret_0) unsigned int movie_crop_hack_enable();
 extern WEAK_FUNC(ret_0) unsigned int movie_crop_hack_disable();
 extern WEAK_FUNC(ret_0) void aperture_toggle(void* priv, int sign);
+extern WEAK_FUNC(ret_0) void iso_toggle(void* priv, int sign);
 extern WEAK_FUNC(ret_0) void shutter_toggle(void* priv, int sign);
 
 #undef CROP_DEBUG
@@ -38,10 +39,6 @@ static int is_100D = 0;
 static int is_EOSM = 0;
 static const int iso_steps_count = 6;
 static int photoreturn = 0;
-static int dualiso = 0;
-
-/* turn off gain buttons when dualiso is set */
-int dual_iso_is_enabled();
 
 static CONFIG_INT("crop.preset", crop_preset_index, 12);
 static CONFIG_INT("crop.shutter_range", shutter_range, 0);
@@ -61,7 +58,6 @@ static CONFIG_INT("crop.HDR_iso_a", HDR_iso_a, 0);
 static CONFIG_INT("crop.HDR_iso_b", HDR_iso_b, 0);
 static CONFIG_INT("crop.isoauto", isoauto, 0);
 static CONFIG_INT("crop.gain_buttons", gain_buttons, 1);
-static CONFIG_INT("crop.iso_climb", iso_climb, 1);
 static CONFIG_INT("crop.presets", presets, 0);
 static CONFIG_INT("crop.previews", previews, 2);
 static CONFIG_INT("crop.tapdisp", tapdisp, 1);
@@ -450,15 +446,10 @@ static int32_t  reg_bl = 0;
 static int32_t  reg_gain = 0;
 static int crop_patch = 0;
 static int crop_patch2 = 0;
-static int isopatch = 0;
-static int isopatchoff = 1;
-static int gain = 0;
 static int subby = 0;
 static int release = 0;
 static int release_b = 0;
 static int autoiso = 0;
-static int isouse = 0;
-static int isostart = 1;
 static int iso1 = 1;
 static int row1 = 0;
 static int row2 = 0;
@@ -1614,55 +1605,6 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
         if (isoauto == 0x2 && lens_info.raw_iso_auto < 0x5c) EngDrvOutLV(0xC0F0b12c, 0x0);
         if (isoauto == 0x3 && lens_info.raw_iso_auto < 0x63) EngDrvOutLV(0xC0F0b12c, 0x0);
     }
-
-
-    /* fast access to iso with press down button */
-    if (gain_buttons != 0x0 && HDR_iso_a == 0x0)
-    {
-        isopatch = 1;
-
-        // /* check if masc selected isoauto in canon menu ;) */
-        if (lens_info.raw_iso != 0x0)
-        {
-            if (iso_climb == 0x2)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x12);
-                if (!is_5D3) cmos_new[0] = 0x827;
-                if (is_5D3) cmos_new[0] = 0x113;
-            }
-            else if (iso_climb == 0x3)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x13);
-                if (!is_5D3) cmos_new[0] = 0x84b;
-                if (is_5D3) cmos_new[0] = 0x223;
-            }
-            else if (iso_climb == 0x4)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x14);
-                if (!is_5D3) cmos_new[0] = 0x86f;
-                if (is_5D3) cmos_new[0] = 0x333;
-            }
-            else if (iso_climb == 0x5)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x15);
-                if (!is_5D3) cmos_new[0] = 0x893;
-                if (is_5D3) cmos_new[0] = 0x443;
-            }
-            else if (iso_climb == 0x6)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x16);
-                if (!is_5D3) cmos_new[0] = 0x8b7;
-                if (is_5D3) cmos_new[0] = 0x553;
-            }
-            if (iso_climb == 0x1)
-            {
-                EngDrvOutLV(0xC0F0b12c, 0x11);
-                if (!is_5D3) cmos_new[0] = 0x803;
-                if (is_5D3) cmos_new[0] = 0x3;
-            }
-        }
-    }
-
 
     /* menu overrides */
     if (cmos1_lo || cmos1_hi)
@@ -5238,13 +5180,12 @@ static struct menu_entry custom_buttons_menu[] =
             {
                 .name   = "gain",
                 .priv   = &gain_buttons,
-                .max    = 5,
-                .choices = CHOICES("OFF", "ISO", "aperture + ISO", "aperture only", "INFO_switch", "SET_switch"),
+                .max    = 4,
+                .choices = CHOICES("OFF", "ISO", "aperture", "INFO_switch", "SET_switch"),
                 .help   = "Up/down buttons + INFO button.",
                 .help2  = "passthrough\n"
                     "ISO = Up/down to alter ISO\n"
-                    "aperture + ISO = Up/down to alter iso and aperture\n"
-                    "aperture only = Up/down to change aperture\n"
+                    "aperture = Up/down to change aperture\n"
                     "INFO_switch = INFO toggle aperture or ISO(turn OFF INFO selectable!\n"
                     "SET_switch = SET toggle aperture or ISO(turn off x3crop!)\n"
             },
@@ -5934,20 +5875,20 @@ if (shutteraverage)
     }
 
     
-    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && !set)
+    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && !set)
     {
         key = MODULE_KEY_PRESS_SET;
     }
     
     //If zoomaid is turned off
-    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && is_movie_mode() && !set)
+    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode() && !set)
     {
         key = MODULE_KEY_PRESS_SET;
     }
 
 
 //Need to separate zoom function and put it in crop_rec_keypress_cbr to fix corruption
-if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 5 && is_movie_mode() && !set)
+if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode() && !set)
 {
 
     //Use SET button instead of halfshutter to zoom
@@ -6245,22 +6186,12 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
 
 //Use tap display to access various settings
-
-
-
-
-
     /* photo mode */
     if (!RECORDING && key == MODULE_KEY_TOUCH_1_FINGER && lv_dispsize == 10 && !is_movie_mode() && !gui_menu_shown())
     {
         /* touch display while in x10 zoom to get into x1 and be able to take a photo for instance */
         set_lv_zoom(1);
         return 0;
-    }
-
-    if ((gain_buttons && !RECORDING && is_movie_mode()) && (key == MODULE_KEY_INFO || (!lv && (key == MODULE_KEY_TOUCH_1_FINGER || key == MODULE_KEY_PRESS_SET)) || gui_menu_shown()))
-    {
-        gain = 1;
     }
 
     /* reset switch if not pushing SET */
@@ -6344,12 +6275,6 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
     if (is_EOSM && lv && !gui_menu_shown() && !RECORDING && is_movie_mode() && lv_dispsize != 10 &&
         key == MODULE_KEY_PRESS_SET && (CROP_PRESET_MENU == CROP_PRESET_2K_EOSM || CROP_PRESET_MENU == CROP_PRESET_3K_EOSM || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM || CROP_PRESET_MENU == CROP_PRESET_4K_EOSM || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp))
     {
-        if (iso_climb == 0x1 && lens_info.raw_iso != 0x48) menu_set_str_value_from_script("Expo", "ISO", "100", 1);
-        if (iso_climb == 0x2 && lens_info.raw_iso != 0x50) menu_set_str_value_from_script("Expo", "ISO", "200", 1);
-        if (iso_climb == 0x3 && lens_info.raw_iso != 0x58) menu_set_str_value_from_script("Expo", "ISO", "400", 1);
-        if (iso_climb == 0x4 && lens_info.raw_iso != 0x60) menu_set_str_value_from_script("Expo", "ISO", "800", 1);
-        if (iso_climb == 0x5 && lens_info.raw_iso != 0x68) menu_set_str_value_from_script("Expo", "ISO", "1600", 1);
-        if (iso_climb == 0x6 && lens_info.raw_iso != 0x70) menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
         set_lv_zoom(10);
         key = MODULE_KEY_UNPRESS_SET;
     }
@@ -6387,21 +6312,12 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
     }
 
     //rewire MENU key when INFO is remapped, first enter INFO, push MENU again and it enters canon menu as supposed to
-    if (key == MODULE_KEY_MENU && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 4 || gain_buttons == 5 || previews))
+    if (key == MODULE_KEY_MENU && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 3 || gain_buttons == 4 || previews))
     {
         // good place to close console
         console_hide();
         if (RECORDING) return 0;
         SetGUIRequestMode(21);
-        if (gain_buttons)
-        {
-            if (iso_climb == 0x1 && lens_info.raw_iso != 0x48) menu_set_str_value_from_script("Expo", "ISO", "100", 1);
-            if (iso_climb == 0x2 && lens_info.raw_iso != 0x50) menu_set_str_value_from_script("Expo", "ISO", "200", 1);
-            if (iso_climb == 0x3 && lens_info.raw_iso != 0x58) menu_set_str_value_from_script("Expo", "ISO", "400", 1);
-            if (iso_climb == 0x4 && lens_info.raw_iso != 0x60) menu_set_str_value_from_script("Expo", "ISO", "800", 1);
-            if (iso_climb == 0x5 && lens_info.raw_iso != 0x68) menu_set_str_value_from_script("Expo", "ISO", "1600", 1);
-            if (iso_climb == 0x6 && lens_info.raw_iso != 0x70) menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
-        }
         
         while (!lv)
         {
@@ -6413,7 +6329,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
     static int info_switch = 0;
     static int info_switch_off = 0;
-    if ((key == MODULE_KEY_INFO || key == MODULE_KEY_PRESS_SET) && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 4 || gain_buttons == 5))
+    if ((key == MODULE_KEY_INFO || key == MODULE_KEY_PRESS_SET) && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 3 || gain_buttons == 4))
     {
         msleep(100);
         if(lv_disp_mode != 0){
@@ -6436,28 +6352,14 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         }
     }
 
-    if (info_switch_off && (gain_buttons != 4 && gain_buttons != 5))
+    if (info_switch_off && (gain_buttons != 3 && gain_buttons != 4))
     {
         info_switch_off = 0;
         info_switch = 0;
         NotifyBox(1000, "INFO_switch OFF");
     }
-
-    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 3 || info_switch))
-    {
-        int a = lens_info.raw_aperture;
-        if (a == lens_info.raw_aperture_max) return 0;
-        if (lens_info.raw_aperture > 0x4a)
-        {
-            aperture_toggle(0, 1);
-        }
-        else
-        {
-            aperture_toggle(0, 2);
-        }
-        return 0;
-    }
-    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 3 || info_switch))
+    
+    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 2 || info_switch))
     {
         int a = lens_info.raw_aperture;
         if (a == lens_info.raw_aperture_min) return 0;
@@ -6472,102 +6374,44 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         return 0;
     }
 
-    /* iso climbing feature */
-    if ((isopatch && lv && !gui_menu_shown() && is_movie_mode()) &&
-        (((is_EOSM && (key == MODULE_KEY_PRESS_DOWN || key == MODULE_KEY_PRESS_UP)) || (is_5D3 && key == MODULE_KEY_INFO) ||
-          ((!is_EOSM && !is_5D3) && key == MODULE_KEY_PRESS_SET)) && gain_buttons && HDR_iso_a == 0x0))
+    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 2 || info_switch))
     {
-        
-        if (dual_iso_is_enabled() && RECORDING) return 0;
-
-        // Increase or decrease exposure with aperture first (for lenses that support it)
-        if (lens_info.raw_aperture && lens_info.lens_exists && gain_buttons == 2){
-
-            int a = lens_info.raw_aperture;
-
-            if(key == MODULE_KEY_PRESS_UP){
-                if(a != lens_info.raw_aperture_min){
-                    // Increase exposure with aperture first
-                    aperture_toggle(0, -1);
-                    return 0;
-                } else if(iso_climb == iso_steps_count){
-                    // Can't raise exposure further
-                    return 0;
-                }
-            } else if (key == MODULE_KEY_PRESS_DOWN){
-                // At ISO 100 when iso_climb == 1
-                if(iso_climb == 1){
-                    if(a != lens_info.raw_aperture_max){
-                        // Decrease exposure with aperture if ISO already at lowest
-                        aperture_toggle(0, 1);
-                        return 0;
-                    } else {
-                        // Both at their max, can't decrease exposure
-                        return 0;
-                    }
-                }
-            }
-        }
-
-        isopatch = 0;
-        isopatchoff = 0;
-
-        // Don't change ISO when set to auto ISO
-        if (lens_info.raw_iso == 0x0){
-            return 0;
-        }
-
-        if (shamem_read(0xC0F0b12c) == 0x11)
+        int a = lens_info.raw_aperture;
+        if (a == lens_info.raw_aperture_max) return 0;
+        if (lens_info.raw_aperture > 0x4a)
         {
-            if (key == MODULE_KEY_PRESS_UP) iso_climb = 0x2;
-            if (key == MODULE_KEY_PRESS_DOWN)
-            {
-                NotifyBox(1000, "iso 100 reached!");
-                return 0;
-            }
+            aperture_toggle(0, 1);
         }
-        else if (shamem_read(0xC0F0b12c) == 0x12)
+        else
         {
-            if (key == MODULE_KEY_PRESS_UP) iso_climb = 0x3;
-            if (key == MODULE_KEY_PRESS_DOWN) iso_climb = 0x1;
+            aperture_toggle(0, 2);
         }
-        else if (shamem_read(0xC0F0b12c) == 0x13)
-        {
-            if (key == MODULE_KEY_PRESS_UP) iso_climb = 0x4;
-            if (key == MODULE_KEY_PRESS_DOWN) iso_climb = 0x2;
-        }
-        else if (shamem_read(0xC0F0b12c) == 0x14)
-        {
-            if (key == MODULE_KEY_PRESS_UP) iso_climb = 0x5;
-            if (key == MODULE_KEY_PRESS_DOWN) iso_climb = 0x3;
-        }
-        else if (shamem_read(0xC0F0b12c) == 0x15)
-        {
-            if (key == MODULE_KEY_PRESS_UP) iso_climb = 0x6;
-            if (key == MODULE_KEY_PRESS_DOWN) iso_climb = 0x4;
-        }
-        else if (shamem_read(0xC0F0b12c) == 0x16)
-        {
-            if (key == MODULE_KEY_PRESS_UP)
-            {
-                NotifyBox(1000, "iso 3200 reached!");
-                return 0;
-            }
-            if (key == MODULE_KEY_PRESS_DOWN) iso_climb = 0x5;
-        }
-        
-        if (dual_iso_is_enabled() && !RECORDING)
-        {
-            if (iso_climb == 0x1 && lens_info.raw_iso != 0x48) menu_set_str_value_from_script("Expo", "ISO", "100", 1);
-            if (iso_climb == 0x2 && lens_info.raw_iso != 0x50) menu_set_str_value_from_script("Expo", "ISO", "200", 1);
-            if (iso_climb == 0x3 && lens_info.raw_iso != 0x58) menu_set_str_value_from_script("Expo", "ISO", "400", 1);
-            if (iso_climb == 0x4 && lens_info.raw_iso != 0x60) menu_set_str_value_from_script("Expo", "ISO", "800", 1);
-            if (iso_climb == 0x5 && lens_info.raw_iso != 0x68) menu_set_str_value_from_script("Expo", "ISO", "1600", 1);
-            if (iso_climb == 0x6 && lens_info.raw_iso != 0x70) menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
-        }
-
         return 0;
     }
+    // Don't change ISO when set to auto ISO
+    if (lens_info.raw_iso == 0x0){
+        return 0;
+    }
+    
+        if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
+        {
+            int a = lens_info.raw_iso;
+            if (a == 0x78) return 0;
+
+                iso_toggle(0, 2);
+
+            return 0;
+        }
+        
+        if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
+        {
+            int a = lens_info.raw_iso;
+            if (a == 0x48) return 0;
+
+                iso_toggle(0, -2);
+
+            return 0;
+        }
 
     return 1;
 }
@@ -7008,86 +6852,6 @@ static void set_zoom(int zoom)
     prop_request_change_wait(PROP_LV_DISPSIZE, &zoom, 4, 1000);
 }
 
-static void iso()
-{
-    if (RECORDING) return;
-    if (!gain_buttons) return;
-
-    if (iso_climb == 0x1 && lens_info.raw_iso != 0x48) menu_set_str_value_from_script("Expo", "ISO", "100", 1);
-    if (iso_climb == 0x2 && lens_info.raw_iso != 0x50) menu_set_str_value_from_script("Expo", "ISO", "200", 1);
-    if (iso_climb == 0x3 && lens_info.raw_iso != 0x58) menu_set_str_value_from_script("Expo", "ISO", "400", 1);
-    if (iso_climb == 0x4 && lens_info.raw_iso != 0x60) menu_set_str_value_from_script("Expo", "ISO", "800", 1);
-    if (iso_climb == 0x5 && lens_info.raw_iso != 0x68) menu_set_str_value_from_script("Expo", "ISO", "1600", 1);
-    if (iso_climb == 0x6 && lens_info.raw_iso != 0x70) menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
-
-    while (!lv)
-    {
-        msleep(300);
-    }
-
-    if (lens_info.raw_iso == 0x48) iso_climb = 0x1;
-    if (lens_info.raw_iso == 0x50) iso_climb = 0x2;
-    if (lens_info.raw_iso == 0x58) iso_climb = 0x3;
-    if (lens_info.raw_iso == 0x60) iso_climb = 0x4;
-    if (lens_info.raw_iso == 0x68) iso_climb = 0x5;
-    if (lens_info.raw_iso == 0x70) iso_climb = 0x6;
-    if (lens_info.raw_iso == 0x78)
-    {
-        menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
-        iso_climb = 0x6;
-    }
-}
-
-static void iso2()
-{
-    if (RECORDING) return;
-    if (!gain_buttons) return;
-    if (lens_info.raw_iso == 0x0) return;
-    //explain why iso is stuck
-    //if (lv_disp_mode != 0 && lv_dispsize == 5 && !isouse)
-    //{
-    //    isouse = 1;
-    //    NotifyBox(3000, "use gain buttons for iso changes");
-    //}
-
-    if (iso_climb == 0x1 && lens_info.raw_iso != 0x48) menu_set_str_value_from_script("Expo", "ISO", "100", 1);
-    if (iso_climb == 0x2 && lens_info.raw_iso != 0x50) menu_set_str_value_from_script("Expo", "ISO", "200", 1);
-    if (iso_climb == 0x3 && lens_info.raw_iso != 0x58) menu_set_str_value_from_script("Expo", "ISO", "400", 1);
-    if (iso_climb == 0x4 && lens_info.raw_iso != 0x60) menu_set_str_value_from_script("Expo", "ISO", "800", 1);
-    if (iso_climb == 0x5 && lens_info.raw_iso != 0x68) menu_set_str_value_from_script("Expo", "ISO", "1600", 1);
-    if (iso_climb == 0x6 && lens_info.raw_iso != 0x70) menu_set_str_value_from_script("Expo", "ISO", "3200", 1);
-    
-    while (!lv)
-    {
-        msleep(300);
-    }
-    
-}
-
-static void iso3()
-{
-    if (RECORDING) return;
-    if (!gain_buttons) return;
-
-    if (lens_info.raw_iso == 0x48) iso_climb = 0x1;
-    if (lens_info.raw_iso == 0x50) iso_climb = 0x2;
-    if (lens_info.raw_iso == 0x58) iso_climb = 0x3;
-    if (lens_info.raw_iso == 0x60) iso_climb = 0x4;
-    if (lens_info.raw_iso == 0x68) iso_climb = 0x5;
-    if (lens_info.raw_iso == 0x70) iso_climb = 0x6;
-    if (lens_info.raw_iso == 0x78)
-    {
-        iso_climb = 0x6;
-    }
-    
-    while (!lv)
-    {
-        msleep(300);
-    }
-    
-}
-
-
 /* when closing ML menu, check whether we need to refresh the LiveView */
 static unsigned int crop_rec_polling_cbr(unsigned int unused)
 {
@@ -7099,31 +6863,6 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
         gremag = 0;
     }
 
-    /* run this once at start up */
-    if (gain_buttons && isostart)
-    {
-        msleep(1000);
-        iso2();
-
-        /* working h264 */
-        if (crop_preset_index == 13)
-        {
-            iso3();
-        }
-        isostart = 0;
-    }
-
-    //safety check for when in x5zoom and iso changed from canon menu while liveview open
-    if ((!isoauto && lv_disp_mode != 0 && lv_dispsize == 5 && gain_buttons) || (!isoauto && get_halfshutter_pressed() && !gui_menu_shown() && !is_5D3 && !crop_patch2 && zoomaid && gain_buttons))
-    {
-        iso2();
-    }
-
-    if (lv_disp_mode == 0 && lv_dispsize == 5 && gain_buttons)
-    {
-        //reset explain box here
-        isouse = 0;
-    }
 
     if (isoauto && !autoiso && !gui_menu_shown() && is_movie_mode())
     {
@@ -7146,25 +6885,9 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
         NotifyBox(2000, "gain buttons turned to ON(x5 zoom)");
         gain_buttons = 1;
         isoauto = 0;
-        iso();
     }
 
-    /* turn off gain buttons when dualiso is set */
-    //Actually, let´s test to keep isoclimb while not recording for fast acces to recovery dualiso 
-    if (dual_iso_is_enabled() && gain_buttons == 1 && !dualiso && RECORDING)
-    {
-        //NotifyBox(2000, "dualiso enabled, turning OFF gain buttons");
-        gain_buttons = 0;
-        dualiso = 1;
-    }
-
-    if (dual_iso_is_enabled() && dualiso && !RECORDING)
-    {
-        //NotifyBox(2000, "dualiso disabled, turning ON gain buttons");
-        gain_buttons = 1;
-        dualiso = 0;
-    }
-
+  
     /* connected to MODULE_KEY_TOUCH_1_FINGER for entering Movie tab menu */
     if (gui_menu_shown() && subby)
     {
@@ -7183,17 +6906,9 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
           msleep(300);
     }
 
-    /* refresh canon menu iso */
-    if (gain_buttons && gain)
-    {
-        iso();
-        gain = 0;
-    }
-
     /* Needs refresh when turning off gain_buttons or iso metadata will still be last selected iso climb setting */
-    if (!gain_buttons && !isopatchoff && (is_EOSM || is_100D))
+    if (!gain_buttons && (is_EOSM || is_100D))
     {
-        isopatchoff = 1;
         if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_EOSM || CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_flv_EOSM || CROP_PRESET_MENU == CROP_PRESET_mcm_mv1080_EOSM ||
             CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
         {
@@ -7238,12 +6953,6 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
     {
         once1 = 0;
         if (zoomaid) NotifyBox(4000, "Crop mode x10 halfshutter focus aid active");
-
-        /* update iso values in photo mode */
-        if (gain_buttons)
-        {
-            iso2();
-        }
     }
 
     /* reset this notification once back in movie mode */
@@ -7251,13 +6960,7 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
     {
         once1 = 1;
     }
-
-    /* update iso going from photo back to movie mode */
-    if ((gain_buttons) && !is_movie_mode())
-    {
-        iso3();
-    }
-
+    
     /* We don´t want this when in photo mode I assume */
     if (!is_movie_mode()) return 0;
 
@@ -7984,7 +7687,6 @@ int raw_lv_settings_still_valid()
     /* 12bit */
     if (OUTPUT_12BIT) raw_info.white_level = 6000;
     /* 14bit 4k timelapse only. Flag set in crop_rec.c */
-    /* iso_climb feature */
     if (OUTPUT_14BIT && shamem_read(0xC0F0b12c) == 0x11)
     {
         raw_info.white_level = 14000;
@@ -8230,7 +7932,6 @@ MODULE_CONFIG(HDR_iso_a)
 MODULE_CONFIG(HDR_iso_b)
 MODULE_CONFIG(isoauto)
 MODULE_CONFIG(gain_buttons)
-MODULE_CONFIG(iso_climb)
 MODULE_CONFIG(x3toggle)
 MODULE_CONFIG(zoomaid)
 MODULE_CONFIG(previews)
