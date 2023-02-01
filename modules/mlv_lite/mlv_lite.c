@@ -4468,7 +4468,9 @@ static int raw_rec_should_preview(void)
         {
            // autofocusing = 1;
         }
-        if (get_ms_clock() - last_hs_unpress > 800)
+         
+         //Old number 800 if shits breaking
+        if (get_ms_clock() - last_hs_unpress > 200)
         {
      	    long_halfshutter_press = 1;
 /* when using x10toggle mode in crop_rec.c will disable framing preview temporarily*/
@@ -4618,9 +4620,13 @@ unsigned int raw_rec_update_preview(unsigned int ctx)
     /* be gentle with the CPU, save it for recording (especially if the buffer is almost full) */
     msleep(
            (need_for_speed)
-           ? ((queued_frames > valid_slot_count / 2) ? 1200 : 700)
-           : 70
+           ? ((queued_frames > valid_slot_count / 2) ? 300 : 100)
+           : 5
     );
+    
+    //old numbers if things are breaking
+    //? ((queued_frames > valid_slot_count / 2) ? 1200 : 700)
+    //: 70
 
     preview_dirty = 1;
     return 1;

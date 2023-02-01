@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM fix race condition)
+raw.c, mlv_lite.c(EOSM speeding up previewing in realtime while recording)
