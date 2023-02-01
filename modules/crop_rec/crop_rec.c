@@ -6906,22 +6906,6 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
           msleep(300);
     }
 
-    /* Needs refresh when turning off gain_buttons or iso metadata will still be last selected iso climb setting */
-    if (!gain_buttons && (is_EOSM || is_100D))
-    {
-        if (CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_EOSM || CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_flv_EOSM || CROP_PRESET_MENU == CROP_PRESET_mcm_mv1080_EOSM ||
-            CROP_PRESET_MENU == CROP_PRESET_anamorphic_rewired_100D)
-        {
-            movie_crop_hack_disable();
-        }
-        else
-        {
-            /* will try to enable mcm but will immediately be disabled. Side effect it will reset which is what we want. What to do with 5D3? */
-            movie_crop_hack_enable();
-        }
-        return 0;
-    }
-
     /* For when in photo mode and enabled x10 zoom mode */
     if ((/*zoomaid &&*/ !is_movie_mode()) || (is_5D3 && (!RECORDING && zoomaid)))
     {

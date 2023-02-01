@@ -1,1 +1,1 @@
-p
+crop_rec.c(EOSM fix when gain_button is off)
