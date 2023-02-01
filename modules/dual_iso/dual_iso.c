@@ -182,8 +182,20 @@ static void bulk_cb(uint32_t *parm, uint32_t address, uint32_t length)
     *parm = 0;
 }
 
+/* Photo mode: always enable */
+/* LiveView: only enable in movie mode */
+/* Refresh the parameters whenever you change something from menu */
+static int enabled_lv = 0;
+static int enabled_ph = 0;
+
 static int isoless_enable(uint32_t start_addr, int size, int count, uint32_t* backup)
 {
+    
+        if (RECORDING)
+        {
+            enabled_lv = 1;
+        }
+    
         /* for 7D */
         int start_addr_0 = start_addr;
         
@@ -293,12 +305,6 @@ static int isoless_disable(uint32_t start_addr, int size, int count, uint32_t* b
 
 static struct semaphore * isoless_sem = 0;
 
-/* Photo mode: always enable */
-/* LiveView: only enable in movie mode */
-/* Refresh the parameters whenever you change something from menu */
-static int enabled_lv = 0;
-static int enabled_ph = 0;
-
 /* thread safe */
 static unsigned int isoless_refresh(unsigned int ctx)
 {
@@ -342,8 +348,7 @@ static unsigned int isoless_refresh(unsigned int ctx)
         if (err) { NotifyBox(10000, "ISOless PH err(%d)", err); enabled_ph = 0; }
     }
     
-    //Only enable dualiso when recording
-    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && RECORDING)
+    if ((isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START) && (RECORDING || enabled_lv))
     {
         enabled_lv = 1;
         int err = isoless_enable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);

@@ -1,1 +1,1 @@
-crop_rec.c(EOSM fix when gain_button is off)
+dual_iso.c:(EOSM fix race condition)
