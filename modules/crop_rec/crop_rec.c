@@ -4568,9 +4568,10 @@ if (ratios == 1 || ratios == 2)
 
 if (!ratios)
 {
-
+    EngDrvOutLV(0xc0f383d4, 0x1b00af + reg_83d4);
+    EngDrvOutLV(0xc0f383dc, 0x3d401b7 + reg_83dc);
     //Preview working in x3 zoom
-    EngDrvOutLV(0xC0F38024, 0x45301c3);
+    EngDrvOutLV(0xC0F38024, 0x45301c3 + reg_6800_width);
     //Unskew anamorphic preview
     EngDrvOutLV(0xc0f11A88, 0x1);
     EngDrvOutLV(0xc0f11A8C, 0x1E002B);

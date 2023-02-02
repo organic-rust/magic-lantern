@@ -1,1 +1,1 @@
-raw.c, mlv_lite.c(EOSM speeding up previewing in realtime while recording)
+crop_rec.c(EOSM preview fix)
