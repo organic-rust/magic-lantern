@@ -4072,10 +4072,12 @@ static struct menu_entry raw_video_menu[] =
             {
                 .name = "Crop rec preview",
                 .priv = &prevmode,
-                .max = 1,
-                .choices = CHOICES("OFF", "auto mode"),
-                .help  = "Auto mode OFF\n"
-			 "Autoselects preview modes for crop rec presets(eosm).\n", 
+                .max = 2,
+                .choices = CHOICES("OFF", "auto mode", "Real time idle"),
+                .help  = "Autoselects preview modes for crop rec presets(eosm)",
+                .help2 = "Auto mode OFF\n"
+                         "Auto mode ON\n"
+                         "Framing/recording, Real time when in idle, crop modes\n",
             },
             {
                 .name = "Kill global draw",
@@ -4389,14 +4391,20 @@ static int raw_rec_should_preview(void)
     int preview_broken = (lv_dispsize == 1 && raw_active_width > 2000);
     
     /* automate framing or realtime preview while selecting a new preset */
-    if (prevmode)
+    if (prevmode && prevmode != 2)
     {
-        if ((raw_active_height > 1300 || raw_active_width > 1800) && RAW_IS_IDLE) preview_mode = 2;
+        if ((raw_active_height > 1300 || raw_active_width > 1800) && RAW_IS_IDLE && (shamem_read(0xC0f0b13c) != 0x12)) preview_mode = 2;
         if (raw_active_height < 1300 && raw_active_width < 1801 && RAW_IS_IDLE) preview_mode = 1;
-        //enable framing for 48fps mode no ratio and set_25fps eosm
-        if (shamem_read(0xc0f06014) == 0x68c) preview_mode = 2;
-        //When anamorphic_rewired_flv_eosm !ratios && set_25fps
-        if (shamem_read(0xc0f06804) == 0x90701e4) preview_mode = 3;
+        //Anamorphic frtp and 1920x1080p zoom real time preview
+        if (shamem_read(0xC0f0b13c) == 0x12) preview_mode = 1;
+   
+    }
+    
+    if (prevmode == 2)
+    {
+        if ((raw_active_height > 1300 || raw_active_width > 1800 || (shamem_read(0xC0f0b13c) == 0x12)) && RAW_IS_IDLE ) preview_mode = 1;
+        if ((raw_active_height > 1300 || raw_active_width > 1800) && (shamem_read(0xC0f0b13c) != 0x12) && RAW_IS_RECORDING) preview_mode = 2;
+        if (raw_active_height < 1300 && raw_active_width < 1801 && RAW_IS_IDLE) preview_mode = 1;
     }
 
     int prefer_framing_preview = 

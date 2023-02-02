@@ -1,1 +1,1 @@
-mlv_lite.c:(EOSM af-on small hacks)
+crop_rec.c,mlv_lite.c(EOSM added option to auto enable real time when idle with crop modes)

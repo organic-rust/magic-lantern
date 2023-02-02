@@ -4600,12 +4600,6 @@ if (!ratios)
      */
 }
 
-    switch (reg)
-    {
-        //reset dummy reg in raw.c
-            case 0xC0f0b13c: return 0x11;
-    }
-
     //Need to separate zoom function and put it in crop_rec_keypress_cbr to fix corruption
     if (ratios == 3)
     {
@@ -4794,6 +4788,12 @@ if (!ratios)
 
     }
      */
+    
+    switch (reg)
+    {
+        //Recognize Crop previeew mode in mlv_lite
+            case 0xC0f0b13c: return 0x12;
+    }
 
     return reg_override_bits(reg, old_val);
 }
@@ -4893,8 +4893,6 @@ static inline uint32_t reg_override_center_z_eosm_1920x1280_frtp(uint32_t reg, u
              case 0xC0F06804: return 0x5200202 + reg_6804_width + (reg_6804_height << 16);
              case 0xC0F06014: return set_25fps == 0x1 ? 0x747 - 76 + reg_6014 - fps_override: 0x747 + reg_6014 - fps_override;
              case 0xC0F0713c: return 0x520;
-                 /* reset dummy reg in raw.c */
-             case 0xC0f0b13c: return 0xf;
          }
 
     if (!ratios)
@@ -4927,6 +4925,12 @@ static inline uint32_t reg_override_center_z_eosm_1920x1280_frtp(uint32_t reg, u
         {
             case 0xC0F07150: return 0x423 + reg_7150;
         }
+    }
+    
+    switch (reg)
+    {
+            //Recognize Crop previeew mode in mlv_lite
+            case 0xC0f0b13c: return 0x12;
     }
 
     return reg_override_bits(reg, old_val);
@@ -6461,8 +6465,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "OFF", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Real-time", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "OFF", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Real-time", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "ON", 1);
             msleep(200);
             set_lv_zoom(5);
@@ -6483,8 +6487,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0x0;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "OFF", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Real-time", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "OFF", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Real-time", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "ON", 1);
             msleep(200);
             set_lv_zoom(5);
@@ -6505,8 +6509,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0x2;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "ON", 1);
             msleep(200);
             set_lv_zoom(5);
@@ -6526,8 +6530,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0x2;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "ON", 1);
             msleep(200);
             set_lv_zoom(5);
@@ -6588,8 +6592,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0x1;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "OFF", 1);
             msleep(200);
             PauseLiveView();
@@ -6611,8 +6615,8 @@ static int crop_rec_needs_lv_refresh()
             presets = 0;
             bitdepth = 0x1;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
-            menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
+            //menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            //menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
             menu_set_str_value_from_script("Display", "Kill Canon GUI", "OFF", 1);
             msleep(200);
             set_lv_zoom(1);
