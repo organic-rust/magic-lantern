@@ -1,1 +1,1 @@
-prevmode starts in auto
+mlv_lite.c:(EOSM need speed numbers from (need_for_speed)

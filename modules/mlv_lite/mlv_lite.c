@@ -4628,10 +4628,15 @@ unsigned int raw_rec_update_preview(unsigned int ctx)
     /* be gentle with the CPU, save it for recording (especially if the buffer is almost full) */
     msleep(
            (need_for_speed)
-           ? ((queued_frames > valid_slot_count / 2) ? 300 : 100)
-           : 5
+           ? ((queued_frames > valid_slot_count / 2) ? 416 : 208)
+           : 20
     );
     
+    
+    //Let´s test these numbers https://www.magiclantern.fm/forum/index.php?topic=25287.msg241992#msg241992
+   // (need_for_speed)
+     //           ? ((queued_frames > valid_slot_count / 2) ? 416 : 208)
+       //         : 20
     //old numbers if things are breaking
     //? ((queued_frames > valid_slot_count / 2) ? 1200 : 700)
     //: 70
