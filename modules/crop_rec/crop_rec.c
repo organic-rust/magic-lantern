@@ -4788,11 +4788,14 @@ if (!ratios)
 
     }
      */
-    
-    switch (reg)
+    //Will wxclude no ration preset so that we go into framing with Auto preview modes
+    if (ratios)
     {
-        //Recognize Crop previeew mode in mlv_lite
+        switch (reg)
+        {
+                //Recognize Crop previeew mode in mlv_lite
             case 0xC0f0b13c: return 0x12;
+        }
     }
 
     return reg_override_bits(reg, old_val);
