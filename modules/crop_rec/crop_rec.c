@@ -6634,12 +6634,12 @@ static int crop_rec_needs_lv_refresh()
         {
             NotifyBox(2000, "default reset");
             fps_override = 0;
-            crop_preset_index = 0;
+            crop_preset_index = 12;
             presets = 0;
             bitdepth = 0x0;
             x3crop = 0x0;
             x3toggle = 0x2;
-            zoomaid = 0x2;
+            zoomaid = 0x0;
             gain_buttons = 1;
             shutter_range = 0;
             previews = 2;
@@ -6664,8 +6664,10 @@ static int crop_rec_needs_lv_refresh()
             menu_set_value_from_script("raw video", "Resolution Index", 11);
             menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
             menu_set_str_value_from_script("raw video", "Aspect ratio", "1:2", 17);
+            menu_set_str_value_from_script("raw video", "More hacks", "lvface", 1);
+            menu_set_str_value_from_script("raw video", "Small hacks", "af on", 2);
             menu_set_str_value_from_script("sound recording", "Enable sound", "ON", 1);
-            menu_set_str_value_from_script("Display", "Kill Canon GUI", "OFF", 1);
+            menu_set_str_value_from_script("Display", "Kill Canon GUI", "ON", 1);
             menu_set_str_value_from_script("Overlay", "Zebras", "OFF", 1);
             menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
             menu_set_str_value_from_script("Overlay", "Focus Peak", "OFF", 1);

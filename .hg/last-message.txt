@@ -1,1 +1,1 @@
-crop_rec.c:(Include 1736x2178 preset to Auto preview modes)
+crop_rec.c:(EOSM default reset updates)
