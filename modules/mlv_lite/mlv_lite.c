@@ -167,7 +167,7 @@ static CONFIG_INT("raw.preview", preview_mode, 1);
 
 static CONFIG_INT("raw.warm.up", warm_up, 0);
 static CONFIG_INT("raw.use.srm.memory", use_srm_memory, 1);
-static CONFIG_INT("raw.small.hacks", small_hacks, 1);
+static CONFIG_INT("raw.small.hacks", small_hacks, 2);
 static CONFIG_INT("raw.more.hacks", more_hacks, 1);
 
 static CONFIG_INT("raw.h264.proxy", h264_proxy_menu, 0);
