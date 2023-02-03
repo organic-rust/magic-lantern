@@ -1,1 +1,1 @@
-crop_rec.c,mlv_lite.c(EOSM toggle auto mode/Real time idle)
+crop_rec.c:(EOSM missed some spots)

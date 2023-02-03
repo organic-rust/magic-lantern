@@ -5205,7 +5205,7 @@ static struct menu_entry custom_buttons_menu[] =
                 .name   = "INFO selectable",
                 .priv   = &previews,
                 .max    = 6,
-                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5"),
+                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5", "INFO6"),
                 .help   = "INFO button shortcuts",
                 .help2  = "passthrough\n"
 			          "INFO1 = access to startoff dropdown list(loupe users)\n"
@@ -5219,7 +5219,7 @@ static struct menu_entry custom_buttons_menu[] =
                 .name   = "SET selectable",
                 .priv   = &set,
                 .max    = 6,
-                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5"),
+                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5", "SET6"),
                 .help   = "SET button, turn other SET functions to OFF!",
                 .help2  = "passthrough\n"
                       "SET1 = access to startoff dropdown list(loupe users)\n"
@@ -6134,20 +6134,18 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         
         if (prevmode == 0)
         {
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            prevmode = 1;
             return 0;
         }
 
         if (prevmode == 1)
         {
             prevmode = 2;
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "Real time idle", 2);
             return 0;
         }
         if (prevmode == 2)
         {
             prevmode = 1;
-            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
             return 0;
         }
         
