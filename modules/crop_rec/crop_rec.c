@@ -24,6 +24,10 @@ extern WEAK_FUNC(ret_0) void aperture_toggle(void* priv, int sign);
 extern WEAK_FUNC(ret_0) void iso_toggle(void* priv, int sign);
 extern WEAK_FUNC(ret_0) void shutter_toggle(void* priv, int sign);
 
+//dummy enabler crop rec
+static int croppreview = 0; /* coming from crop_rec.c */
+extern int WEAK_FUNC(croppreview) prevmode;
+
 #undef CROP_DEBUG
 
 #ifdef CROP_DEBUG
@@ -5200,28 +5204,30 @@ static struct menu_entry custom_buttons_menu[] =
             {
                 .name   = "INFO selectable",
                 .priv   = &previews,
-                .max    = 5,
+                .max    = 6,
                 .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5"),
                 .help   = "INFO button shortcuts",
                 .help2  = "passthrough\n"
 			          "INFO1 = access to startoff dropdown list(loupe users)\n"
 			          "INFO2 = toggle between Real-time/framing\n"
-			          "INFO3 = toggle raw Zebras ON or OFF\n"
-			          "INFO4 = toggle False colors ON or OFF\n"
-			          "INFO5 = toggle Focus Peaking and Zebras ON or OFF\n"
+                      "INFO3 = Toggle Crop rec preview auto mode/Real time idle\n"
+			          "INFO4 = toggle raw Zebras ON or OFF\n"
+			          "INFO5 = toggle False colors ON or OFF\n"
+			          "INFO6 = toggle Focus Peaking and Zebras ON or OFF\n"
             },
             {
                 .name   = "SET selectable",
                 .priv   = &set,
-                .max    = 5,
+                .max    = 6,
                 .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5"),
                 .help   = "SET button, turn other SET functions to OFF!",
                 .help2  = "passthrough\n"
                       "SET1 = access to startoff dropdown list(loupe users)\n"
                       "SET2 = toggle between Real-time/framing\n"
-                      "SET3 = toggle raw Zebras ON or OFF\n"
-                      "SET4 = toggle False colors ON or OFF\n"
-                      "SET5 = toggle Focus Peaking and Zebras ON or OFF\n"
+                      "SET3 = Toggle Crop rec preview auto mode/Real time idle\n"
+                      "SET4 = toggle raw Zebras ON or OFF\n"
+                      "SET5 = toggle False colors ON or OFF\n"
+                      "SET6 = toggle Focus Peaking and Zebras ON or OFF\n"
             },
             {
                 .name   = "Tap display",
@@ -6096,7 +6102,8 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 }
 
 
-    static int prevmode = 0;
+    static int previewmode = 0;
+  
     if (((key == MODULE_KEY_INFO && previews == 0x2) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x2) || (key == MODULE_KEY_PRESS_SET && set == 0x2)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
     {
         if(lv_disp_mode != 0){
@@ -6105,44 +6112,49 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         }
 
         menu_set_str_value_from_script("raw video", "Crop rec preview", "OFF", 1);
-        if (prevmode)
+        if (previewmode)
         {
-            prevmode = 0;
+            previewmode = 0;
             menu_set_value_from_script("raw video", "Preview", 1);
         }
         else
         {
-            prevmode = 1;
+            previewmode = 1;
             menu_set_value_from_script("raw video", "Preview", 2);
         }
         return 0;
     }
-
-
-    //toggle between Zebras ON or OFF
+    
     if (((key == MODULE_KEY_INFO && previews == 0x3) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x3) || (key == MODULE_KEY_PRESS_SET && set == 0x3)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
     {
         if(lv_disp_mode != 0){
             // Use INFO key to cycle LV as normal when not in the LV with ML overlays
             return 1;
         }
-
-	//turn off False color here
-	menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
-        if (prevmode)
+        
+        if (prevmode == 0)
         {
-            prevmode = 0;
-            menu_set_str_value_from_script("Overlay", "Zebras", "OFF", 1);
+            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            return 0;
         }
-        else
+
+        if (prevmode == 1)
+        {
+            prevmode = 2;
+            menu_set_str_value_from_script("raw video", "Crop rec preview", "Real time idle", 2);
+            return 0;
+        }
+        if (prevmode == 2)
         {
             prevmode = 1;
-            menu_set_str_value_from_script("Overlay", "Zebras", "ON", 1);
+            menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
+            return 0;
         }
-        return 0;
+        
     }
 
-    //toggle between False colors ON or OFF
+
+    //toggle between Zebras ON or OFF
     if (((key == MODULE_KEY_INFO && previews == 0x4) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x4) || (key == MODULE_KEY_PRESS_SET && set == 0x4)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
     {
         if(lv_disp_mode != 0){
@@ -6152,24 +6164,20 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
 	//turn off False color here
 	menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
-        if (prevmode)
+        if (previewmode)
         {
-            prevmode = 0;
-            menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
-	    gui_open_menu();
-	    msleep(200);
-            module_send_keypress(MODULE_KEY_MENU);
-	    msleep(200);
+            previewmode = 0;
+            menu_set_str_value_from_script("Overlay", "Zebras", "OFF", 1);
         }
         else
         {
-            prevmode = 1;
-            menu_set_str_value_from_script("Overlay", "False color", "ON", 1);
+            previewmode = 1;
+            menu_set_str_value_from_script("Overlay", "Zebras", "ON", 1);
         }
         return 0;
     }
 
-    //toggle between Focus Peaking together with Zebras ON or OFF
+    //toggle between False colors ON or OFF
     if (((key == MODULE_KEY_INFO && previews == 0x5) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x5) || (key == MODULE_KEY_PRESS_SET && set == 0x5)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
     {
         if(lv_disp_mode != 0){
@@ -6177,15 +6185,42 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
             return 1;
         }
 
-        if (prevmode)
+	//turn off False color here
+	menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
+        if (previewmode)
         {
-            prevmode = 0;
+            previewmode = 0;
+            menu_set_str_value_from_script("Overlay", "False color", "OFF", 1);
+            gui_open_menu();
+            msleep(200);
+            module_send_keypress(MODULE_KEY_MENU);
+            msleep(200);
+        }
+        else
+        {
+            previewmode = 1;
+            menu_set_str_value_from_script("Overlay", "False color", "ON", 1);
+        }
+        return 0;
+    }
+
+    //toggle between Focus Peaking together with Zebras ON or OFF
+    if (((key == MODULE_KEY_INFO && previews == 0x6) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x6) || (key == MODULE_KEY_PRESS_SET && set == 0x6)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
+    {
+        if(lv_disp_mode != 0){
+            // Use INFO key to cycle LV as normal when not in the LV with ML overlays
+            return 1;
+        }
+
+        if (previewmode)
+        {
+            previewmode = 0;
             menu_set_str_value_from_script("Overlay", "Zebras", "OFF", 1);
             menu_set_str_value_from_script("Overlay", "Focus Peak", "OFF", 1);
         }
         else
         {
-            prevmode = 1;
+            previewmode = 1;
             menu_set_str_value_from_script("Overlay", "Zebras", "ON", 1);
             menu_set_str_value_from_script("Overlay", "Focus Peak", "ON", 1);
         }
