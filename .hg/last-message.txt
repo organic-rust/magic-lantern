@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM missed some spots)
+crop_rec.c:(EOSM adding back 1024 gamma values raw.c)
