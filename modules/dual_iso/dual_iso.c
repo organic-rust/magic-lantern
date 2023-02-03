@@ -686,8 +686,8 @@ static void isoless_mlv_rec_cbr (uint32_t event, void *ctx, mlv_hdr_t *hdr)
     mlv_set_type((mlv_hdr_t *)dual_iso_block, "DISO");
     dual_iso_block->blockSize = sizeof(mlv_diso_hdr_t);
     
-    /* and fill with data */
-    dual_iso_block->dualMode = dual_iso_is_active();
+    /* and fill with data */ //Apply !dual_iso_is_active as we roundtrip getting base iso preview
+    dual_iso_block->dualMode = !dual_iso_is_active();
     dual_iso_block->isoValue = isoless_recovery_iso;
     
     /* finally pass it to mlv_rec which will free the block when it has been processed */
