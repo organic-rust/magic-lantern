@@ -159,7 +159,7 @@ static CONFIG_INT("raw.movie_restart", movie_restart, 0);
 
 CONFIG_INT("raw.CropRecPreview", prevmode, 1);
 
-static CONFIG_INT("raw.preview", preview_mode, 1);
+CONFIG_INT("raw.preview", preview_mode, 1);
 #define PREVIEW_AUTO   (preview_mode == 0)
 #define PREVIEW_CANON  (preview_mode == 1)
 #define PREVIEW_ML     (preview_mode == 2)

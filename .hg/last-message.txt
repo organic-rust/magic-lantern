@@ -1,1 +1,1 @@
-dual_iso.c(EOSM eset dualiso Mode 1)
+dual_iso.c:(EOSM framing runs regular dualiso implementation)
