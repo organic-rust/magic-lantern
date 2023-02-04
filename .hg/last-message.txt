@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM fixes)
+dual_iso.c:(EOSM turning off dualiso issue fixed)
