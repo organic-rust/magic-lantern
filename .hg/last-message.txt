@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM framing runs regular dualiso implementation)
+dual_iso.c:(EOSM non dualiso with x10 zoom and halfshutter pressed when in framing mode. Doesn´t play nice with zoomaid functions. Go figure)

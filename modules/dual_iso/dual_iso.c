@@ -332,7 +332,8 @@ static unsigned int isoless_refresh(unsigned int ctx)
         enabled_lv = 0;
     }
     
-    if (enabled_lv && setting_changed && preview_mode != 1)
+    //Hack to preview base iso while not recording //for when previewing real time but coming from framing
+    if ((enabled_lv && !RECORDING && preview_mode != 1 && get_halfshutter_pressed()) || lv_dispsize == 10)
     {
         isoless_disable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
         enabled_lv = 0;
@@ -358,7 +359,8 @@ static unsigned int isoless_refresh(unsigned int ctx)
         if (err) { NotifyBox(10000, "ISOless LV err(%d)", err); enabled_lv = 0; }
     }
     
-    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && preview_mode != 1)
+    //for when previewing real time but coming from framing
+    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && preview_mode != 1 && !get_halfshutter_pressed() && lv_dispsize != 10)
     {
         enabled_lv = 1;
         int err = isoless_enable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
