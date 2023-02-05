@@ -5926,6 +5926,12 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     }
     */ //Pause this. Works like sticky zoom but not good if we use autofocus
     
+    if (!ratios && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp)
+    {
+        key = MODULE_KEY_UNPRESS_SET;
+        return 0;
+    }
+    
     if (!lv) return 0;
 
         if (ratios == 3)
@@ -6111,14 +6117,13 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     }
      */
     
-}
-    
     while (get_halfshutter_pressed())
     {
         msleep(10);
-        
     }
-
+    
+}
+    
     static int previewmode = 0;
   
     if (((key == MODULE_KEY_INFO && previews == 0x2) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x2) || (key == MODULE_KEY_PRESS_SET && set == 0x2)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))

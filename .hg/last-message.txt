@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM tap display misses)
+crop_rec.c(EOSM fix when !ratios)
