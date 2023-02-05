@@ -1,1 +1,1 @@
-crop_rec.c,dual_iso.c:(EOSM short cut turning dual iso ON or OFF with SET7 or INFO7, metadata fix when dualiso turned to OFF)
+crop_rec.c:(EOSM Fixes customize buttons, adding shortcuts to recovery and baase iso when dualiso is enabled)

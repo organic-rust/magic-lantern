@@ -26,6 +26,9 @@ extern WEAK_FUNC(ret_0) void shutter_toggle(void* priv, int sign);
 
 int dual_iso_is_enabled();
 
+static int reciso = 0; /* coming from crop_rec.c */
+extern int WEAK_FUNC(reciso) isoless_recovery_iso;
+
 //dummy enabler crop rec
 static int croppreview = 0; /* coming from crop_rec.c */
 extern int WEAK_FUNC(croppreview) prevmode;
@@ -5206,45 +5209,50 @@ static struct menu_entry custom_buttons_menu[] =
             {
                 .name   = "INFO selectable",
                 .priv   = &previews,
-                .max    = 7,
-                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5", "INFO6", "INFO7"),
+                .max    = 8,
+                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5", "INFO6", "INFO7", "INFO8"),
                 .help   = "INFO button shortcuts",
                 .help2  = "passthrough\n"
-			          "INFO1 = access to startoff dropdown list(loupe users)\n"
-			          "INFO2 = toggle between Real-time/framing\n"
-                      "INFO3 = Toggle Crop rec preview auto mode/Real time idle\n"
-			          "INFO4 = toggle raw Zebras ON or OFF\n"
-			          "INFO5 = toggle False colors ON or OFF\n"
-			          "INFO6 = toggle Focus Peaking and Zebras ON or OFF\n"
-                      "SET7 = toggle Dual ISO ON or OFF\n"
+                "INFO1 = access to startoff dropdown list(loupe users)\n"
+                "INFO2 = toggle between Real-time/framing\n"
+                "INFO3 = Toggle Crop rec preview auto mode/Real time idle\n"
+                "INFO4 = toggle raw Zebras ON or OFF\n"
+                "INFO5 = toggle False colors ON or OFF\n"
+                "INFO6 = toggle Focus Peaking and Zebras ON or OFF\n"
+                "INFO7 = toggle Dual ISO ON or OFF\n"
+                "INFO8 = toggle Dual iso Base ISO/Recovery ISO UP/DOWN\n"
             },
             {
                 .name   = "SET selectable",
                 .priv   = &set,
-                .max    = 7,
-                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5", "SET6", "SET7"),
-                .help   = "SET button, turn other SET functions to OFF!",
+                .max    = 8,
+                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5", "SET6", "SET7", "SET8"),
+                .help   = "SET button, turn other SET functions to OFF! Conflicts with zoom preview",
                 .help2  = "passthrough\n"
-                      "SET1 = access to startoff dropdown list(loupe users)\n"
-                      "SET2 = toggle between Real-time/framing\n"
-                      "SET3 = Toggle Crop rec preview auto mode/Real time idle\n"
-                      "SET4 = toggle raw Zebras ON or OFF\n"
-                      "SET5 = toggle False colors ON or OFF\n"
-                      "SET6 = toggle Focus Peaking and Zebras ON or OFF\n"
-                      "SET7 = toggle Dual ISO ON or OFF\n"
+                "SET1 = access to startoff dropdown list(loupe users)\n"
+                "SET2 = toggle between Real-time/framing\n"
+                "SET3 = Toggle Crop rec preview auto mode/Real time idle\n"
+                "SET4 = toggle raw Zebras ON or OFF\n"
+                "SET5 = toggle False colors ON or OFF\n"
+                "SET6 = toggle Focus Peaking and Zebras ON or OFF\n"
+                "SET7 = toggle Dual ISO ON or OFF\n"
+                "SET8 = toggle Dual iso Base ISO/Recovery ISO UP/DOWN\n"
             },
             {
                 .name   = "Tap display",
                 .priv   = &tapdisp,
-                .max    = 5,
-                .choices = CHOICES("OFF", "Tap display 01", "Tap display 02", "Tap display 03", "Tap display 04", "Tap display 05"),
+                .max    = 8,
+                .choices = CHOICES("OFF", "Tap display 01", "Tap display 02", "Tap display 03", "Tap display 04", "Tap display 05", "Tap display 06", "Tap display 07", "Tap display 08"),
                 .help   = "Tap display shortcuts",
                 .help2  = "passthrough\n"
-			          "Tap display 01 = fast access to startoff dropdown list(default)\n"
-			          "Tap display 02 = toggle between Real-time/framing\n"
-			          "Tap display 03 = toggle raw Zebras ON or OFF\n"
-			          "Tap display 04 = toggle False colors ON or OFF\n"
-			          "Tap display 05 = toggle Focus Peaking and Zebras ON or OFF\n"
+                "Tap display 01 = fast access to startoff dropdown list(default)\n"
+                "Tap display 02 = toggle between Real-time/framing\n"
+                "Tap display 03 = toggle raw Zebras ON or OFF\n"
+                "Tap display 04 = toggle False colors ON or OFF\n"
+                "Tap display 05 = toggle Focus Peaking and Zebras ON or OFF\n"
+                "Tap display 06 = toggle Focus Peaking and Zebras ON or OFF\n"
+                "Tap display 07 = toggle Dual ISO ON or OFF\n"
+                "Tap display 08 = toggle Dual iso Base ISO/Recovery ISO UP/DOWN\n"
             },
             MENU_EOL,
         },
@@ -5893,20 +5901,20 @@ if (shutteraverage)
     }
 
     
-    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && !set)
+    if (get_halfshutter_pressed() && RECORDING && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4)
     {
         key = MODULE_KEY_PRESS_SET;
     }
     
     //If zoomaid is turned off
-    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode() && !set)
+    if (get_halfshutter_pressed() && !RECORDING && !zoomaid && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode())
     {
         key = MODULE_KEY_PRESS_SET;
     }
 
 
 //Need to separate zoom function and put it in crop_rec_keypress_cbr to fix corruption
-if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode() && !set)
+if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp && lv_dispsize != 10 && !gui_menu_shown() && lv && shamem_read(0xC0F14224) != 0x77F077F && gain_buttons != 4 && is_movie_mode())
 {
 
     //Use SET button instead of halfshutter to zoom
@@ -6104,7 +6112,12 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
      */
     
 }
-
+    
+    while (get_halfshutter_pressed())
+    {
+        msleep(10);
+        
+    }
 
     static int previewmode = 0;
   
@@ -6246,6 +6259,32 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         {
             menu_set_str_value_from_script("Expo", "Dual ISO", "ON", 1);
             NotifyBox(1000, "Dual ISO ON");
+        }
+        return 0;
+    }
+    
+    
+    static int base_recovery_iso = 0;
+    //toggle Base ISO,Recovery ISO,DUALISO UP/DOWN
+    if (((key == MODULE_KEY_INFO && previews == 0x8) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x8) || (key == MODULE_KEY_PRESS_SET && set == 0x8)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
+    {
+        
+        if (!dual_iso_is_enabled())
+        {
+            NotifyBox(2000, "Please turn on Dual ISO");
+            return 0;
+        }
+        
+        menu_set_str_value_from_script("Expo", "Dual ISO", "ON", 1);
+        if (base_recovery_iso)
+        {
+            base_recovery_iso = 0;
+            NotifyBox(1000, "RECOVERY ISO UP/DOWN");
+        }
+        else
+        {
+            base_recovery_iso = 1;
+            NotifyBox(1000, "BASE ISO UP/DOWN");
         }
         return 0;
     }
@@ -6459,7 +6498,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
         return 0;
     }
     
-        if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
+        if (set != 8 && tapdisp != 8 && previews != 8 && key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
         {
             int a = lens_info.raw_iso;
             if (a == 0x78) return 0;
@@ -6469,7 +6508,7 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
             return 0;
         }
         
-        if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
+        if (set != 8 && tapdisp != 8 && previews != 8 && key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
         {
             int a = lens_info.raw_iso;
             if (a == 0x48) return 0;
@@ -6478,6 +6517,80 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
 
             return 0;
         }
+    
+    
+    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
+    {
+        int a = lens_info.raw_iso;
+        if (a == 0x78) return 0;
+
+            iso_toggle(0, 2);
+
+        return 0;
+    }
+    
+    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
+    {
+        int a = lens_info.raw_iso;
+        if (a == 0x48) return 0;
+
+            iso_toggle(0, -2);
+
+        return 0;
+    }
+    
+    
+    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 0 || tapdisp == 8 || previews == 8))
+    {
+        
+        if (!dual_iso_is_enabled())
+        {
+            base_recovery_iso = 1;
+            return 0;
+        }
+            
+        isoless_recovery_iso++;
+        //We hit 6400 iso already
+        if (isoless_recovery_iso > 6)
+        {
+            isoless_recovery_iso = 6;
+        }
+        
+        if (isoless_recovery_iso == 0) NotifyBox(200, "recovery iso 100");
+        if (isoless_recovery_iso == 1) NotifyBox(200, "recovery iso 200");
+        if (isoless_recovery_iso == 2) NotifyBox(200, "recovery iso 400");
+        if (isoless_recovery_iso == 3) NotifyBox(200, "recovery iso 800");
+        if (isoless_recovery_iso == 4) NotifyBox(200, "recovery iso 1600");
+        if (isoless_recovery_iso == 5) NotifyBox(200, "recovery iso 3200");
+        if (isoless_recovery_iso == 6) NotifyBox(200, "recovery iso 6400");
+        return 0;
+    }
+    
+    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 0 || tapdisp == 8 || previews == 8))
+    {
+        
+        if (!dual_iso_is_enabled())
+        {
+            base_recovery_iso = 1;
+            return 0;
+        }
+        
+        isoless_recovery_iso--;
+        //We hit 100 iso already
+        if (isoless_recovery_iso < 0)
+        {
+            isoless_recovery_iso = 0;
+        }
+        
+        if (isoless_recovery_iso == 0) NotifyBox(200, "recovery iso 100");
+        if (isoless_recovery_iso == 1) NotifyBox(200, "recovery iso 200");
+        if (isoless_recovery_iso == 2) NotifyBox(200, "recovery iso 400");
+        if (isoless_recovery_iso == 3) NotifyBox(200, "recovery iso 800");
+        if (isoless_recovery_iso == 4) NotifyBox(200, "recovery iso 1600");
+        if (isoless_recovery_iso == 5) NotifyBox(200, "recovery iso 3200");
+        if (isoless_recovery_iso == 6) NotifyBox(200, "recovery iso 6400");
+        return 0;
+    }
 
     return 1;
 }
