@@ -699,7 +699,9 @@ static void isoless_mlv_rec_cbr (uint32_t event, void *ctx, mlv_hdr_t *hdr)
     dual_iso_block->blockSize = sizeof(mlv_diso_hdr_t);
     
     /* and fill with data */ //Apply !dual_iso_is_active as we roundtrip getting base iso preview
-    if (preview_mode == 1) dual_iso_block->dualMode = !dual_iso_is_active();
+    
+    //Hack to make real time previewing accept correct metadata when active and not active
+    if (preview_mode == 1 && isoless_hdr) dual_iso_block->dualMode = !dual_iso_is_active();
     if (preview_mode != 1) dual_iso_block->dualMode = dual_iso_is_active();
     dual_iso_block->isoValue = isoless_recovery_iso;
     

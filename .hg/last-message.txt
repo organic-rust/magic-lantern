@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM turning off dualiso issue fixed)
+crop_rec.c,dual_iso.c:(EOSM short cut turning dual iso ON or OFF with SET7 or INFO7, metadata fix when dualiso turned to OFF)

@@ -24,6 +24,8 @@ extern WEAK_FUNC(ret_0) void aperture_toggle(void* priv, int sign);
 extern WEAK_FUNC(ret_0) void iso_toggle(void* priv, int sign);
 extern WEAK_FUNC(ret_0) void shutter_toggle(void* priv, int sign);
 
+int dual_iso_is_enabled();
+
 //dummy enabler crop rec
 static int croppreview = 0; /* coming from crop_rec.c */
 extern int WEAK_FUNC(croppreview) prevmode;
@@ -5204,8 +5206,8 @@ static struct menu_entry custom_buttons_menu[] =
             {
                 .name   = "INFO selectable",
                 .priv   = &previews,
-                .max    = 6,
-                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5", "INFO6"),
+                .max    = 7,
+                .choices = CHOICES("OFF", "INFO1", "INFO2", "INFO3", "INFO4", "INFO5", "INFO6", "INFO7"),
                 .help   = "INFO button shortcuts",
                 .help2  = "passthrough\n"
 			          "INFO1 = access to startoff dropdown list(loupe users)\n"
@@ -5214,12 +5216,13 @@ static struct menu_entry custom_buttons_menu[] =
 			          "INFO4 = toggle raw Zebras ON or OFF\n"
 			          "INFO5 = toggle False colors ON or OFF\n"
 			          "INFO6 = toggle Focus Peaking and Zebras ON or OFF\n"
+                      "SET7 = toggle Dual ISO ON or OFF\n"
             },
             {
                 .name   = "SET selectable",
                 .priv   = &set,
-                .max    = 6,
-                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5", "SET6"),
+                .max    = 7,
+                .choices = CHOICES("OFF", "SET1", "SET2", "SET3", "SET4", "SET5", "SET6", "SET7"),
                 .help   = "SET button, turn other SET functions to OFF!",
                 .help2  = "passthrough\n"
                       "SET1 = access to startoff dropdown list(loupe users)\n"
@@ -5228,6 +5231,7 @@ static struct menu_entry custom_buttons_menu[] =
                       "SET4 = toggle raw Zebras ON or OFF\n"
                       "SET5 = toggle False colors ON or OFF\n"
                       "SET6 = toggle Focus Peaking and Zebras ON or OFF\n"
+                      "SET7 = toggle Dual ISO ON or OFF\n"
             },
             {
                 .name   = "Tap display",
@@ -6221,6 +6225,27 @@ if (key == MODULE_KEY_PRESS_SET && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EO
             previewmode = 1;
             menu_set_str_value_from_script("Overlay", "Zebras", "ON", 1);
             menu_set_str_value_from_script("Overlay", "Focus Peak", "ON", 1);
+        }
+        return 0;
+    }
+    
+    //toggle between Focus Peaking together with Zebras ON or OFF
+    if (((key == MODULE_KEY_INFO && previews == 0x7) || (key == MODULE_KEY_TOUCH_1_FINGER && tapdisp == 0x7) || (key == MODULE_KEY_PRESS_SET && set == 0x7)) && (lv_dispsize != 10 && lv && is_movie_mode() && !gui_menu_shown()))
+    {
+        if(lv_disp_mode != 0){
+            // Use INFO key to cycle LV as normal when not in the LV with ML overlays
+            return 1;
+        }
+
+        if (dual_iso_is_enabled())
+        {
+            menu_set_str_value_from_script("Expo", "Dual ISO", "OFF", 1);
+            NotifyBox(1000, "Dual ISO OFF");
+        }
+        else
+        {
+            menu_set_str_value_from_script("Expo", "Dual ISO", "ON", 1);
+            NotifyBox(1000, "Dual ISO ON");
         }
         return 0;
     }
