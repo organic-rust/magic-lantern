@@ -6544,7 +6544,7 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     }
     
     
-    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 0 || tapdisp == 8 || previews == 8))
+    if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
         
         if (!dual_iso_is_enabled())
@@ -6570,7 +6570,7 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
         return 0;
     }
     
-    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 0 || tapdisp == 8 || previews == 8))
+    if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
         
         if (!dual_iso_is_enabled())
