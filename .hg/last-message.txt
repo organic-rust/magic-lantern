@@ -1,1 +1,1 @@
-crop_rec.c(EOSM fix when !ratios)
+crop_rec.c:(EOSM focus box always in center)

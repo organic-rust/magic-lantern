@@ -6610,6 +6610,9 @@ static int crop_rec_needs_lv_refresh()
     {
         return 0;
     }
+    
+    //always in focus box in center?
+    center_lv_afframe();
 
     /* startoff presets(experimental) */
     if (is_EOSM && presets != 0x0 && !RECORDING)
@@ -7528,6 +7531,8 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
             ResumeLiveView();
         }
         //put this bvram hack in here too as it helps when shifting between presets
+            //Focus box in center please
+            center_lv_afframe();
             bvramhack = 1;
     }
 
@@ -7987,8 +7992,10 @@ static unsigned int raw_info_update_cbr(unsigned int unused)
 
 static unsigned int crop_rec_init()
 {
-    //last_crop_preset_index = crop_preset_index;
 
+    //let´s always start with focus boc in center
+    center_lv_afframe();
+    
     is_digic4 = is_camera("DIGIC", "4");
     is_digic5 = is_camera("DIGIC", "5");
 
