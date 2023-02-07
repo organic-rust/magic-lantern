@@ -4584,15 +4584,15 @@ if (!ratios)
     EngDrvOutLV(0xc0f11A88, 0x1);
     EngDrvOutLV(0xc0f11A8C, 0x1E002B);
     
-    //maximize 1736x2178
+    //maximize 1736x2180
     switch (reg)
     {
-        case 0xC0F06804: return 0x89f01d4 + reg_6804_width + (reg_6804_height << 16);
+        case 0xC0F06804: return 0x8a101d4 + reg_6804_width + (reg_6804_height << 16);
         case 0xC0F06014: return 0x9fb + reg_6014 - fps_override;
         case 0xC0F0600c: return 0x2090209 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06008: return 0x2090209 + reg_6008 + (reg_6008 << 16);
         case 0xC0F06010: return 0x209 + reg_6008;
-        case 0xC0F0713c: return 0x89f + reg_713c;
+        case 0xC0F0713c: return 0x8a1 + reg_713c;
     }
     
     /* pause this for 1736x2178
