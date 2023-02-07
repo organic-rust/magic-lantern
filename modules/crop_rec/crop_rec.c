@@ -4006,7 +4006,7 @@ static inline uint32_t reg_override_mcm_mv1080_eosm(uint32_t reg, uint32_t old_v
     /* gets rid of the black border to the right */
     EngDrvOutLV(0xc0f383d4, 0x4f0010);
     EngDrvOutLV(0xc0f383dc, 0x42401c6);
-
+    
     //zoom function while recording
   if (shamem_read(0xC0F14224) != 0x77F077F && (RECORDING || !zoomaid))
   {
@@ -4093,6 +4093,24 @@ static inline uint32_t reg_override_mcm_mv1080_eosm(uint32_t reg, uint32_t old_v
             case 0xC0F06804: return 0x45601e4 + reg_6804_width + (reg_6804_height << 16);
             case 0xC0F0713c: return 0x457 + reg_713c;
             case 0xC0F07150: return 0x3e0 + reg_7150;
+        }
+    }
+    
+    
+    //24fps
+    if (set_25fps == 0)
+    {
+        switch (reg)
+        {
+            case 0xC0F06014: return 0x98b + reg_6014 - fps_override;
+            case 0xC0F0600c: return 0x2210221 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06008: return 0x2210221 + reg_6008 + (reg_6008 << 16);
+            case 0xC0F06010: return 0x221 + reg_6008;
+
+            case 0xC0F06824: return 0x21f + reg_6824;
+            case 0xC0F06828: return 0x21f + reg_6824;
+            case 0xC0F0682C: return 0x21f + reg_6824;
+            case 0xC0F06830: return 0x21f + reg_6824;
         }
     }
 
@@ -4433,7 +4451,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
         {
             case 0xC0F06804: return 0xcd701e4 + reg_6804_width + (reg_6804_height << 16);
 
-            case 0xC0F06014: return 0xeec + reg_6014 - fps_override + flvtl*2000;
+            case 0xC0F06014: return 0xeef + reg_6014 - fps_override + flvtl*2000;
             case 0xC0F0600c: return 0x2550255 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return 0x2550255 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return 0x255 + reg_6008;
@@ -4454,7 +4472,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0x90701e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014 - fps_override;
-            case 0xC0F06014: return 0xa2d + reg_6014 - fps_override;
+            case 0xC0F06014: return 0xa2b + reg_6014 - fps_override;
             case 0xC0F0600c: return 0x1ff01ff + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return 0x1ff01ff + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return 0x1ff + reg_6008;
@@ -4475,7 +4493,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0x8a301e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014 - fps_override;
-            case 0xC0F06014: return set_25fps ? 0xbc9 - 442: 0xbc9 + flvtl*2000;
+            case 0xC0F06014: return set_25fps ? 0xbc9 - 442 + reg_6014 - fps_override: 0xbc7 + reg_6014 - fps_override + flvtl*2000;
             case 0xC0F0600c: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return set_25fps ? 0x211 - 12 + reg_6008: 0x211 + reg_6008;
@@ -4496,7 +4514,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0x8c701e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014 - fps_override;
-            case 0xC0F06014: return set_25fps ? 0xbc9 - 442: 0xbc9 + flvtl*2000;
+            case 0xC0F06014: return set_25fps ? 0xbc9 - 442 + reg_6014 - fps_override: 0xbc7 + reg_6014 - fps_override + flvtl*2000;
             case 0xC0F0600c: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return set_25fps ? 0x2110211 - 12  + reg_6008 + (reg_6008 << 16): 0x2110211 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return set_25fps ? 0x211 - 12 + reg_6008: 0x211 + reg_6008;
@@ -4517,7 +4535,7 @@ static inline uint32_t reg_override_anamorphic_rewired_flv_eosm(uint32_t reg, ui
             case 0xC0F06804: return 0xb9101e4 + reg_6804_width + (reg_6804_height << 16);
 
                 //dualiso, static lines, but how often will dualiso be used? case 0xC0F06014: return 0xbcf + reg_6014 - fps_override;
-            case 0xC0F06014: return set_25fps ? 0xd77 - 31 + reg_6014 - fps_override: 0xd76 + flvtl*2000;
+            case 0xC0F06014: return set_25fps ? 0xd77 - 28 + reg_6014 - fps_override: 0xd77 + reg_6014 - fps_override + flvtl*2000;
             case 0xC0F0600c: return set_25fps ? 0x2430243 - 60 + reg_6008 + (reg_6008 << 16): 0x2430243 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06008: return set_25fps ? 0x2430243 - 60 + reg_6008 + (reg_6008 << 16): 0x2430243 + reg_6008 + (reg_6008 << 16);
             case 0xC0F06010: return set_25fps ? 0x243 - 60 + reg_6008: 0x243 + reg_6008;

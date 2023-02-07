@@ -1,1 +1,1 @@
-crop_rec.c.(EOSM 1736x2180)
+crop_rec.c:(EOSM fps finetuning due to dualiso)
