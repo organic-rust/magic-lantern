@@ -458,7 +458,6 @@ static int crop_patch2 = 0;
 static int subby = 0;
 static int release = 0;
 static int release_b = 0;
-static int autoiso = 0;
 static int iso1 = 1;
 static int row1 = 0;
 static int row2 = 0;
@@ -6515,13 +6514,16 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
         }
         return 0;
     }
-    // Don't change ISO when set to auto ISO
-    if (lens_info.raw_iso == 0x0){
-        return 0;
-    }
-    
+
         if (set != 8 && tapdisp != 8 && previews != 8 && key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
         {
+            
+            // Don't change ISO when set to auto ISO
+            if (lens_info.raw_iso == 0x0){
+                return 0;
+            }
+            
+            
             int a = lens_info.raw_iso;
             if (a == 0x78) return 0;
 
@@ -6532,6 +6534,12 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
         
         if (set != 8 && tapdisp != 8 && previews != 8 && key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && (gain_buttons == 1 || (gain_buttons >= 3 && !info_switch)))
         {
+            
+            // Don't change ISO when set to auto ISO
+            if (lens_info.raw_iso == 0x0){
+                return 0;
+            }
+            
             int a = lens_info.raw_iso;
             if (a == 0x48) return 0;
 
@@ -6543,6 +6551,13 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     
     if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
+        
+        // Don't change ISO when set to auto ISO
+        if (lens_info.raw_iso == 0x0){
+            return 0;
+        }
+        
+        
         int a = lens_info.raw_iso;
         if (a == 0x78) return 0;
 
@@ -6553,6 +6568,12 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     
     if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
+        
+        // Don't change ISO when set to auto ISO
+        if (lens_info.raw_iso == 0x0){
+            return 0;
+        }
+        
         int a = lens_info.raw_iso;
         if (a == 0x48) return 0;
 
@@ -6564,6 +6585,12 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     
     if (key == MODULE_KEY_PRESS_UP && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
+        
+        // Don't change ISO when set to auto ISO
+        if (lens_info.raw_iso == 0x0){
+            return 0;
+        }
+        
         
         if (!dual_iso_is_enabled())
         {
@@ -6590,6 +6617,12 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
     
     if (key == MODULE_KEY_PRESS_DOWN && lv && !gui_menu_shown() && is_movie_mode() && !RECORDING && !base_recovery_iso && (set == 8 || tapdisp == 8 || previews == 8))
     {
+        
+        // Don't change ISO when set to auto ISO
+        if (lens_info.raw_iso == 0x0){
+            return 0;
+        }
+        
         
         if (!dual_iso_is_enabled())
         {
@@ -7069,31 +7102,6 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
         gremag = 0;
     }
 
-
-    if (isoauto && !autoiso && !gui_menu_shown() && is_movie_mode())
-    {
-        if (gain_buttons) NotifyBox(2000, "gain buttons turned to OFF(autoiso)");
-        autoiso = 1;
-        gain_buttons = 0;
-        menu_set_str_value_from_script("Expo", "ISO", "Auto", 1);
-    }
-
-    if ((lens_info.raw_iso != 0x0 || !isoauto || gain_buttons) && autoiso && !gui_menu_shown() && is_movie_mode())
-    {
-        //reset
-        if (isoauto) NotifyBox(2000, "max iso is now turned to OFF");
-        autoiso = 0;
-        isoauto = 0;
-    }
-
-    if (isoauto && autoiso && !gui_menu_shown() && is_movie_mode() && lv_dispsize == 5)
-    {
-        NotifyBox(2000, "gain buttons turned to ON(x5 zoom)");
-        gain_buttons = 1;
-        isoauto = 0;
-    }
-
-  
     /* connected to MODULE_KEY_TOUCH_1_FINGER for entering Movie tab menu */
     if (gui_menu_shown() && subby)
     {
