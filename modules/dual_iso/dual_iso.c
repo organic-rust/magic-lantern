@@ -333,7 +333,7 @@ static unsigned int isoless_refresh(unsigned int ctx)
     }
     
     //Hack to preview base iso while not recording //for when previewing real time but coming from framing
-    if ((enabled_lv && !RECORDING && preview_mode != 1 && get_halfshutter_pressed()) || lv_dispsize == 10 || !isoless_hdr)
+    if ((enabled_lv && !RECORDING && preview_mode != 1 && get_halfshutter_pressed()) || lv_dispsize == 10 || isoless_hdr)
     {
         isoless_disable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
         enabled_lv = 0;

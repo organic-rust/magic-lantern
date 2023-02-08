@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM metadata now correctly shows when selecting dualliso other way around)
+dual_iso.c:(EOSM fix bug while in framing)
