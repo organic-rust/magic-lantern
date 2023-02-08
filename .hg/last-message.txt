@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM fixing auto iso issue)
+dual_iso.c:(EOSM metadata now correctly shows when selecting dualliso other way around)

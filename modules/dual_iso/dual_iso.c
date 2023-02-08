@@ -705,6 +705,10 @@ static void isoless_mlv_rec_cbr (uint32_t event, void *ctx, mlv_hdr_t *hdr)
     if (preview_mode != 1) dual_iso_block->dualMode = dual_iso_is_active();
     dual_iso_block->isoValue = isoless_recovery_iso;
     
+    //If selecting iso other way around, to get iso 100 a hcak is needed
+    if (isoless_recovery_iso == 0 && isoless_hdr > isoless_recovery_iso) dual_iso_block->isoValue = 0xfffffff4;
+    if (isoless_hdr > isoless_recovery_iso && isoless_recovery_iso > 0) dual_iso_block->isoValue = isoless_hdr;
+    
     /* finally pass it to mlv_rec which will free the block when it has been processed */
     mlv_rec_queue_block((mlv_hdr_t *)dual_iso_block);
 }
