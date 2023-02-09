@@ -1,1 +1,1 @@
-dual_iso.c:(EOSM fix bug while in framing)
+cdual_iso.c:(EOSM add lv_enabled in dualiso code or cache hooks will complain)
