@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 28.k start off in 10bit)
+crop_rec.c,dual_iso.c:(EOSM rewrote dualiso roundtrip code a bit)

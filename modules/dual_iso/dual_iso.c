@@ -189,6 +189,7 @@ static void bulk_cb(uint32_t *parm, uint32_t address, uint32_t length)
 /* LiveView: only enable in movie mode */
 /* Refresh the parameters whenever you change something from menu */
 static int enabled_lv = 0;
+static int enabled_lv2 = 0;
 static int enabled_ph = 0;
 
 static int isoless_enable(uint32_t start_addr, int size, int count, uint32_t* backup)
@@ -325,6 +326,10 @@ static unsigned int isoless_refresh(unsigned int ctx)
     int setting_changed = (sig != prev_sig);
     prev_sig = sig;
     
+    //Will update iso/iso2 in lens.c
+    if (isoless_hdr) enabled_lv2 = 1;
+    if (!isoless_hdr) enabled_lv2 = 0;
+    
     //Hack to preview base iso while not recording but apply scanlines when in framing mode //enabled_lv needed or cache problems
     if ((enabled_lv && !RECORDING && preview_mode == 1) || (lv_dispsize == 10) || (enabled_lv && setting_changed) || (enabled_lv && !RECORDING && preview_mode != 1 && get_halfshutter_pressed()))
     {
@@ -407,7 +412,7 @@ int dual_iso_is_enabled()
 
 int dual_iso_is_active()
 {
-    return is_movie_mode() ? enabled_lv : enabled_ph;
+    return is_movie_mode() ? (enabled_lv || enabled_lv2) : enabled_ph;
 }
 
 int dual_iso_get_recovery_iso()
@@ -685,11 +690,9 @@ static void isoless_mlv_rec_cbr (uint32_t event, void *ctx, mlv_hdr_t *hdr)
     mlv_set_type((mlv_hdr_t *)dual_iso_block, "DISO");
     dual_iso_block->blockSize = sizeof(mlv_diso_hdr_t);
     
-    /* and fill with data */ //Apply !dual_iso_is_active as we roundtrip getting base iso preview
+    /* and fill with data */
     
-    //Hack to make real time previewing accept correct metadata when active and not active
-    if (preview_mode == 1 && isoless_hdr) dual_iso_block->dualMode = !dual_iso_is_active();
-    if (preview_mode != 1) dual_iso_block->dualMode = dual_iso_is_active();
+    dual_iso_block->dualMode = dual_iso_is_active();
     dual_iso_block->isoValue = isoless_recovery_iso;
     
     //If selecting iso other way around, to get iso 100 a hcak is needed

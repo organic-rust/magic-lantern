@@ -6547,27 +6547,19 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
             return 0;
         }
         
-        
         if (!dual_iso_is_enabled())
         {
             base_recovery_iso = 1;
             return 0;
         }
-            
+        
         isoless_recovery_iso++;
         //We hit 6400 iso already
-        if (isoless_recovery_iso > 6)
+        if (isoless_recovery_iso > 7)
         {
-            isoless_recovery_iso = 6;
+            isoless_recovery_iso = 7;
         }
         
-        if (isoless_recovery_iso == 0) NotifyBox(200, "recovery iso 100");
-        if (isoless_recovery_iso == 1) NotifyBox(200, "recovery iso 200");
-        if (isoless_recovery_iso == 2) NotifyBox(200, "recovery iso 400");
-        if (isoless_recovery_iso == 3) NotifyBox(200, "recovery iso 800");
-        if (isoless_recovery_iso == 4) NotifyBox(200, "recovery iso 1600");
-        if (isoless_recovery_iso == 5) NotifyBox(200, "recovery iso 3200");
-        if (isoless_recovery_iso == 6) NotifyBox(200, "recovery iso 6400");
         return 0;
     }
     
@@ -6579,28 +6571,19 @@ if (get_halfshutter_pressed() && CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM
             return 0;
         }
         
-        
         if (!dual_iso_is_enabled())
         {
             base_recovery_iso = 1;
             return 0;
         }
-        
+                
         isoless_recovery_iso--;
         //We hit 100 iso already
         if (isoless_recovery_iso < 0)
         {
             isoless_recovery_iso = 0;
         }
-        
-        if (isoless_recovery_iso == 0) NotifyBox(200, "recovery iso 100");
-        if (isoless_recovery_iso == 1) NotifyBox(200, "recovery iso 200");
-        if (isoless_recovery_iso == 2) NotifyBox(200, "recovery iso 400");
-        if (isoless_recovery_iso == 3) NotifyBox(200, "recovery iso 800");
-        if (isoless_recovery_iso == 4) NotifyBox(200, "recovery iso 1600");
-        if (isoless_recovery_iso == 5) NotifyBox(200, "recovery iso 3200");
-        if (isoless_recovery_iso == 6) NotifyBox(200, "recovery iso 6400");
-        return 0;
+                
     }
 
     return 1;
