@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM reducing reg 713 by 5 units reducing compression errors)
+crop_rec.c:(EOSM 28.k start off in 10bit)

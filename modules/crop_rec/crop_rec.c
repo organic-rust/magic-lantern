@@ -6711,12 +6711,12 @@ static int crop_rec_needs_lv_refresh()
 
         if (presets == 0x5)
         {
-            NotifyBox(2000, "2.8k 1x1 crop 12bit");
+            NotifyBox(2000, "2.8k 1x1 crop 10bit");
             movie_crop_hack_disable();
             msleep(100);
             crop_preset_index = 8;
             presets = 0;
-            bitdepth = 0x2;
+            bitdepth = 0x1;
             menu_set_str_value_from_script("Movie", "raw video", "ON", 1);
             //menu_set_str_value_from_script("raw video", "Crop rec preview", "auto mode", 1);
             //menu_set_str_value_from_script("raw video", "Preview", "Framing", 1);
