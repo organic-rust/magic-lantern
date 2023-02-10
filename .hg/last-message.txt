@@ -1,1 +1,1 @@
-cdual_iso.c:(EOSM add lv_enabled in dualiso code or cache hooks will complain)
+crop_rec.c:(EOSM reducing reg 713 by 5 units reducing compression errors)

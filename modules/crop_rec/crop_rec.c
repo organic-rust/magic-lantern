@@ -3754,15 +3754,12 @@ static inline uint32_t reg_override_28K_eosm(uint32_t reg, uint32_t old_val)
 {
             EngDrvOutLV(0xc0f383d4, 0x1b00a5 + reg_83d4);
             EngDrvOutLV(0xc0f383dc, 0x3d401ad + reg_83dc);
-
-    if (ratios == 0x1)
-    {
-        EngDrvOutLV(0xC0F38024, 0x45302cd);
+            EngDrvOutLV(0xC0F38024, 0x45302cd);
         switch (reg)
         {
                 /* will change to 24fps for continous action 2.39:1 */
             case 0xC0F06804: return 0x4c302de + reg_6804_width + (reg_6804_height << 16);
-            case 0xC0F0713c: return 0x4c3 + reg_713c;
+            case 0xC0F0713c: return 0x4be + reg_713c;
             case 0xC0F07150: return 0x4a4 + reg_7150;
             case 0xC0F06014: return set_25fps ? 0x62b - 64 + reg_6014 - fps_override: 0x62b + reg_6014 - fps_override;
             case 0xC0F06824: return 0x3ca;
@@ -3773,47 +3770,6 @@ static inline uint32_t reg_override_28K_eosm(uint32_t reg, uint32_t old_val)
             case 0xC0F06008: return 0x34b034b + reg_6008 + (reg_6008 << 16);
             case 0xC0F0600C: return 0x34b034b + reg_6008 + (reg_6008 << 16);
         }
-    }
-
-    if (ratios == 0x2)
-    {
-        EngDrvOutLV(0xC0F38024, 0x45302cd);
-        switch (reg)
-        {
-                /* will change to 24fps for continous action 2.35:1 */
-            case 0xC0F06804: return 0x4c302de + reg_6804_width + (reg_6804_height << 16);
-            case 0xC0F0713c: return 0x4c3 + reg_713c;
-            case 0xC0F07150: return 0x4a4 + reg_7150;
-            case 0xC0F06014: return set_25fps ? 0x62b - 64 + reg_6014 - fps_override: 0x62b + reg_6014 - fps_override;
-            case 0xC0F06824: return 0x3ca;
-            case 0xC0F06828: return 0x3ca;
-            case 0xC0F0682C: return 0x3ca;
-            case 0xC0F06830: return 0x3ca;
-            case 0xC0F06010: return 0x34b + reg_6008;
-            case 0xC0F06008: return 0x34b034b + reg_6008 + (reg_6008 << 16);
-            case 0xC0F0600C: return 0x34b034b + reg_6008 + (reg_6008 << 16);
-        }
-    }
-
-    if (ratios == 0x3 || ratios == 0x0)
-    {
-        EngDrvOutLV(0xC0F38024, 0x45302cd);
-        switch (reg)
-        {
-                /* will change to 24fps for continous action 2.35:1 */
-            case 0xC0F06804: return 0x4c302de + reg_6804_width + (reg_6804_height << 16);
-            case 0xC0F0713c: return 0x4c3 + reg_713c;
-            case 0xC0F07150: return 0x4a4 + reg_7150;
-            case 0xC0F06014: return set_25fps ? 0x62b - 64 + reg_6014 - fps_override: 0x62b + reg_6014 - fps_override;
-            case 0xC0F06824: return 0x3ca;
-            case 0xC0F06828: return 0x3ca;
-            case 0xC0F0682C: return 0x3ca;
-            case 0xC0F06830: return 0x3ca;
-            case 0xC0F06010: return 0x34b + reg_6008;
-            case 0xC0F06008: return 0x34b034b + reg_6008 + (reg_6008 << 16);
-            case 0xC0F0600C: return 0x34b034b + reg_6008 + (reg_6008 << 16);
-        }
-    }
 
     return reg_override_bits(reg, old_val);
 }
