@@ -474,6 +474,7 @@ static int anacrop4 = 0;
 static int bvramhack = 0;
 static int start = 0;
 static int zoom = 0;
+static int mlvsndhack = 0;
 
 /* helper to allow indexing various properties of Canon's video modes */
 static inline int get_video_mode_index()
@@ -5843,16 +5844,11 @@ if (shutteraverage)
 
 
     //Reset zoom when stopping recording
-    if (key == MODULE_KEY_REC && RECORDING && (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM))
+    if (key == MODULE_KEY_REC && RECORDING && !zoomaid && (CROP_PRESET_MENU == CROP_PRESET_Anamorphic_EOSM_frtp || CROP_PRESET_MENU == CROP_PRESET_CENTER_Z_EOSM_1920x1280_frtp || CROP_PRESET_MENU == CROP_PRESET_28K_EOSM))
     {
         zoom = 0;
-        
         //When autofocus is used we need to refresh liveview or af will fail on second recording. Not perfect and even sticky shutter needs refreshing like this but it refreshes when in x10zoom already.
-        if (!zoomaid)
-        {
-        PauseLiveView();
-        ResumeLiveView();
-        }
+        mlvsndhack = 1;
     }
     
     
@@ -7498,6 +7494,16 @@ static unsigned int crop_rec_polling_cbr(unsigned int unused)
             //Focus box in center please
             center_lv_afframe();
             bvramhack = 1;
+    }
+    
+    //Needs to happen here if mlv_snd is turned to off. Race condition. This is to reset auto focus which else will stop functioning
+    if (!zoomaid && mlvsndhack)
+    {
+        mlvsndhack = 0;
+        SetGUIRequestMode(21);
+        msleep(200);
+        SetGUIRequestMode(0);
+        msleep(200);
     }
 
     if (!RECORDING && bvramhack && !gui_menu_shown())

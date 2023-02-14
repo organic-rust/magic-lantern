@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM 12bit 2.8K again)
+crop_rec.c:(EOSM hack fixing big when mlv_snd is OFF)
