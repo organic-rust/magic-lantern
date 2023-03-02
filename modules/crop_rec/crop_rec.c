@@ -1422,11 +1422,11 @@ static void FAST cmos_hook(uint32_t* regs, uint32_t* stack, uint32_t pc)
                  //   return;
                // }
                 //cmos_new[5] = 0x300;             /* vertical (first|last) */ Fixes hot lines when zoomaid used with auto focus but not centred
-                cmos_new[5] = 0x200;             /* Centered but hot lines when zoomaid enabled and af on. Let´s go for center */
+                cmos_new[5] = 0x240;             /* Centered but hot lines when zoomaid enabled and af on. Let´s go for center */
                 cmos_new[7] = 0xaa9;            /* horizontal offset (mask 0xFF0) */
                 if (ratios == 0x3)
                 {
-                    cmos_new[5] = 0x200;            /* vertical (first|last) */
+                    cmos_new[5] = 0x240;            /* vertical (first|last) */
                     cmos_new[7] = 0xf20;
                 }
                 break;
