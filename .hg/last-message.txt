@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM hack fixing big when mlv_snd is OFF)
+crop_rec.c:(EOSM adding back centering to 28k and 3k as af routines works when zoomaid turned off)
