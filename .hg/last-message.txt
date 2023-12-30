@@ -1,1 +1,1 @@
-crop_rec.c:(EOSM cmos 5 240 centered)
+black level fix for eos m 2048 instead of 2047

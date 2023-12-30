@@ -1182,7 +1182,14 @@ int raw_update_params_work()
         printf("Black level: %d\n", black_mean);
     }
     
-    raw_info.black_level = black_mean;
+    if (is_EOSM)
+    {
+        raw_info.black_level = 2048;
+    }
+    else
+    {
+        raw_info.black_level = black_mean;
+    }
 
     if (!lv)
     {
