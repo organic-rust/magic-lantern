@@ -1,1 +1,1 @@
-black level fix for eos m 2048 instead of 2047
+correction 2048 black level
