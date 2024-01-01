@@ -1,1 +1,1 @@
-correction 2048 black level
+raw.c: back to 2047 black level number
