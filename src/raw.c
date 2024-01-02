@@ -65,6 +65,10 @@ void raw_set_dirty(void)
     dirty = 1;
 }
 
+/* flags for mlv_lite to free buffers and reallocate when needed */
+int allocating_new_buffer_is_needed = 0;
+int mlv_lite_reallocate_please = 0;
+
 /* dual ISO interface */
 static int (*dual_iso_get_recovery_iso)() = MODULE_FUNCTION(dual_iso_get_recovery_iso);
 static int (*dual_iso_get_dr_improvement)() = MODULE_FUNCTION(dual_iso_get_dr_improvement);
@@ -131,6 +135,7 @@ static int (*dual_iso_get_dr_improvement)() = MODULE_FUNCTION(dual_iso_get_dr_im
 
 #ifdef CONFIG_70D
 #define DEFAULT_RAW_BUFFER MEM(0x7CFEC + 0x30)
+#define DEFAULT_RAW_BUFFER_SIZE (0x4CFF0000 - 0x4B328000)
 #endif
 
 #ifdef CONFIG_100D
@@ -235,71 +240,40 @@ static int lv_raw_gain = 0;
  */
 #define WHITE_LEVEL 16200
 
-static int is_EOSM = 0;
-static int is_100D = 0;
-static int is_5D3 = 0;
-static int is_6D = 0;
+// flag to detect which bit-depth is selected/applied (when using analog gain) from crop_rec
+// mainly to rely on this flag to apply the correct white level for each bit-depth
+int BitDepth_Analog = 14; // default bit-depth is 14
 
 static int get_default_white_level()
 {
-
+    #ifdef CONFIG_DIGIC_V
+    // adjust white level when using negative analog gain for lower bit-depths
+    // fixme: implement it in a clean way
+    
+    if (BitDepth_Analog != 14) // check if we are using lower bit-depths
+    {
+        int default_white = WHITE_LEVEL;
+        if (BitDepth_Analog == 10) return (default_white = 2870); /* 10-bit lossless, analog gain */
+        if (BitDepth_Analog == 11) return (default_white = 3692); /* 11-bit lossless, analog gain */
+        if (BitDepth_Analog == 12) return (default_white = 5336); /* 12-bit lossless, analog gain */
+    }
+    #endif   
+    
+    if (lv_raw_gain)
+    {
         int default_white = WHITE_LEVEL;
 
-if (!is_EOSM && !is_100D && !is_6D && !is_5D3)
-{
-        if (shamem_read(0xC0F42744) == 0x6060606)
-        {	
-	    /* 8bit by checking pushed liveview gain register set in crop_rec.c */
-            int default_white = WHITE_LEVEL;
-            return (default_white = 2250);   
-        }
+        #if defined(CONFIG_100D) || defined(CONFIG_700D) /* other models? */
+        /* http://www.magiclantern.fm/forum/index.php?topic=16040.msg191131#msg191131 */
+        /* 100 units below measured value = about 0.01 EV */
+        default_white = (lens_info.raw_iso == ISO_100) ? 13400 : 15200;
+        #endif
 
-        if (shamem_read(0xC0F42744) == 0x5050505)
-        {	
-	    /* 9bit by checking pushed liveview gain register set in crop_rec.c */
-            int default_white = WHITE_LEVEL;
-            return (default_white = 2550);   
-        }
-
-/* used for 4k timelapse function */
-        if (shamem_read(0xC0F42744) == 0x3030303)
-        {	
-	    /* 12bit kind of by checking pushed liveview gain register set in crop_rec.c */
-            int default_white = WHITE_LEVEL;
-            return (default_white = (lens_info.raw_iso == ISO_100) ? 4940 : 5000);   
-        }
-
-        if (shamem_read(0xC0F42744) == 0x4040404)
-        {	
-	    /* 10bit by checking pushed liveview gain register set in crop_rec.c */
-            int default_white = WHITE_LEVEL;
-            return (default_white = (lens_info.raw_iso == ISO_100) ? 2840 : 2890);   
-        }
-
-        if (shamem_read(0xC0F42744) == 0x2020202)
-        {	
-	    /* 12bit by checking pushed liveview gain register set in crop_rec.c */
-            int default_white = WHITE_LEVEL;
-            return (default_white = 6000);   
-        }
-}
-    
-#if defined(CONFIG_100D) || defined(CONFIG_700D) || defined(CONFIG_EOSM) /* other models? */
-    /* http://www.magiclantern.fm/forum/index.php?topic=16040.msg191131#msg191131 */
-    /* 100 units below measured value = about 0.01 EV */
-    default_white = 15200;
-    if (shamem_read(0xC0F0b12c) == 0x11)
-    {
-    /* iso_climb routines */
-        default_white = 14000;
+        /* fixme: hardcoded black level */
+        return (default_white - 2048) * lv_raw_gain / 4096 + 2048;
     }
-    if (shamem_read(0xC0F0b12c) == 0x0)
-    {
-    default_white = (lens_info.raw_iso == ISO_100) ? 14000 : 15200;
-    }
-#endif
     
-    return default_white;
+    return WHITE_LEVEL;
 }
 
 /**
@@ -606,41 +580,9 @@ static int raw_lv_get_resolution(int* width, int* height)
 #ifdef CONFIG_EOSM
     /* EOS M exception */
     /* http://www.magiclantern.fm/forum/index.php?topic=16608.msg176023#msg176023 */
-    if (lv_dispsize == 1 && !RECORDING_H264 && shamem_read(0xC0f0b13c) != 0x10 && shamem_read(0xC0f0b13c) != 0x11)
-
-    {    
-            *height = 727; 
-
-        if (shamem_read(0xC0f0b13c) == 0xa)
-        {	
-        /* mv1080p mode crop_rec.c */
-            *height = 1188;
-        }
-
-        if (shamem_read(0xC0f0b13c) == 0xb)
-        {	
-        /* mv1080p 45fps */
-            *height = 1006;
-        }
-
-        if (shamem_read(0xC0f0b13c) == 0xc)
-        {	
-        /* mv1080p 46fps fullwidth */
-            *height = 769;
-        }
-
-        if (shamem_read(0xC0f0b13c) == 0xe)
-        {	
-        /* mv1080p 46fps */
-            *height = 759;
-        }
-        
-        if (shamem_read(0xC0f0b13c) == 0xd)
-        {
-            /* anamorphic rewired EOSM */
-            *height = 1920;
-        }
-
+    if (lv_dispsize == 1 && !video_mode_crop && !RECORDING_H264)
+    {
+        *height = 727;
     }
 #endif
 
@@ -668,6 +610,7 @@ static int raw_lv_get_resolution(int* width, int* height)
  * on models where it's known, and throw an assertion if they are not large enough.
  * This will be especially useful for implementing 3K, 4K and full-res LiveView.
  */
+ 
 #ifdef CONFIG_EDMAC_RAW_SLURP
 
 /* requires raw_sem */
@@ -705,6 +648,10 @@ static void raw_lv_realloc_buffer()
             {
                 printf(" - back to default.\n");
                 raw_lv_free_buffer();
+                
+                // flag to tell mlv_lite we got back to DEFAULT_RAW_BUFFER
+                // to let it reallocate its buffers and re-use freed memory
+                mlv_lite_reallocate_please = 1;
             }
             else if (raw_lv_buffer)
             {
@@ -718,17 +665,23 @@ static void raw_lv_realloc_buffer()
 
         raw_lv_buffer = (void *) DEFAULT_RAW_BUFFER;
         raw_lv_buffer_size = DEFAULT_RAW_BUFFER_SIZE;
+        allocating_new_buffer_is_needed = 0;
         return;
     }
 
     if (raw_lv_buffer_size >= required_size)
     {
         /* no need for a larger buffer */
+        allocating_new_buffer_is_needed = 0;
         return;
     }
 
     printf("Default raw buffer too small (%s", format_memory_size(raw_lv_buffer_size));
     printf(", need %dx%d %s) - reallocating.\n", width, height, format_memory_size(required_size));
+
+#ifdef CONFIG_ALLOCATE_RAW_LV_BUFFER
+    allocating_new_buffer_is_needed = 1; // flag to tell mlv_lite to free its buffers while we allocate a new buufer
+#endif 
 
     if (raw_lv_buffer && raw_lv_buffer != (void *) DEFAULT_RAW_BUFFER)
     {
@@ -738,8 +691,14 @@ static void raw_lv_realloc_buffer()
 
 #ifdef CONFIG_ALLOCATE_RAW_LV_BUFFER
     raw_allocated_lv_buffer = fio_malloc(RAW_LV_BUFFER_ALLOC_SIZE);
+    if (!raw_allocated_lv_buffer)
+    {
+        printf("New buffer isn't allocated\n");
+        return; // retry
+    }
     raw_lv_buffer = raw_allocated_lv_buffer;
     raw_lv_buffer_size = RAW_LV_BUFFER_ALLOC_SIZE;
+    allocating_new_buffer_is_needed = 0;
     return;
 #endif /* CONFIG_ALLOCATE_RAW_LV_BUFFER */
 
@@ -1182,7 +1141,13 @@ int raw_update_params_work()
         printf("Black level: %d\n", black_mean);
     }
     
-        raw_info.black_level = black_mean;
+    raw_info.black_level = black_mean;
+    
+    //Correct black level for digic V cameras. Maybe not after all. Tests performed
+    //if (black_mean == 2047)
+    //{
+    //    raw_info.black_level = 2048;
+    //}
 
     if (!lv)
     {
@@ -1736,11 +1701,8 @@ static int autodetect_black_level(int* black_mean, int* black_stdev_x100)
     int stdev1 = 0;
     int mean2 = 0;
     int stdev2 = 0;
-     
-    if ((raw_info.active_area.x1 > 50) && (shamem_read(0xC0f0b13c) != 0xd) && (shamem_read(0xC0f0b13c) != 0x11) &&
-(shamem_read(0xC0f0b13c) != 0xe) && (shamem_read(0xC0f0b13c) != 0xd) && (shamem_read(0xC0f06804) != 0x5a70298) && 
-(shamem_read(0xC0f0b13c) != 0xb) && (shamem_read(0xc0f0713c) != 0x456) && (shamem_read(0xC0f06804) != 0x4550298) &&
-(shamem_read(0xC0f06804) != 0x93a011b) && (shamem_read(0xC0f06804) != 0x8d6011b)) /* use the left black bar for black calibration, shamem exception anamorphic and high speed frame rates crop rec.c */
+        
+    if (raw_info.active_area.x1 > 50) /* use the left black bar for black calibration */
     {
         autodetect_black_level_calc(
             16, raw_info.active_area.x1 - 16,
@@ -2138,7 +2100,6 @@ static void FAST raw_preview_fast_work(void* raw_buffer, void* lv_buffer, int y1
     }
 
     /* scale useful range (black...white) to 0...1023 or less */
-    /* trying less for the eos m faster preview */
     int black = raw_info.black_level;
     int white = raw_info.white_level;
     int div = 0;

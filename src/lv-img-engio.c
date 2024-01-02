@@ -940,19 +940,7 @@ static struct menu_entry lv_img_menu[] = {
     },
     #endif
 
-    #if defined(FEATURE_SHUTTER_FINE_TUNING) && !defined(FEATURE_IMAGE_EFFECTS) && !defined(FEATURE_EXPO_ISO_DIGIC)
-    {
-        .name = "shutter fine-tuning", 
-        .priv = &shutter_finetune,
-        .update = shutter_finetune_display,
-        .min = -500,
-        .max = 500,
-        .icon_type = IT_PERCENT_LOG_OFF,
-        .edit_mode = EM_SHOW_LIVEVIEW,
-        .help = "Fine-tune shutter speed in approx 20-microsecond increments.",
-        .depends_on = DEP_LIVEVIEW | DEP_MOVIE_MODE,
-    },
-    #else if defined(FEATURE_IMAGE_EFFECTS) || defined(FEATURE_EXPO_ISO_DIGIC) || defined(FEATURE_SHUTTER_FINE_TUNING)
+    #if defined(FEATURE_IMAGE_EFFECTS) || defined(FEATURE_EXPO_ISO_DIGIC) || defined(FEATURE_SHUTTER_FINE_TUNING)
     {
         .name = "Image Fine-tuning",
         .select = menu_open_submenu,
@@ -988,7 +976,7 @@ static struct menu_entry lv_img_menu[] = {
             
             #ifdef FEATURE_SHUTTER_FINE_TUNING
             {
-                .name = "shutter fine-tuning", 
+                .name = "Shutter fine-tuning", 
                 .priv = &shutter_finetune,
                 .update = shutter_finetune_display,
                 .min = -500,

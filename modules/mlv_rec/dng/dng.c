@@ -530,7 +530,7 @@ static void dng_fill_header(struct frame_info * frame_info, struct dng_data * dn
         /* Focal resolution stuff */
         int32_t focal_resolution_x[2] = {camera_id[current_cam].focal_resolution_x[0], camera_id[current_cam].focal_resolution_x[1]};
         int32_t focal_resolution_y[2] = {camera_id[current_cam].focal_resolution_y[0], camera_id[current_cam].focal_resolution_y[1]};
-        int32_t par[4] = {3,3,3,3};
+        int32_t par[4] = {1,1,1,1};
 
         /* If RAWC block present calculate aspect ratio from binning/skipping values */
         if(frame_info->rawc_hdr.blockType[0])
@@ -561,12 +561,6 @@ static void dng_fill_header(struct frame_info * frame_info, struct dng_data * dn
                 focal_resolution_x[1] = focal_resolution_x[1] * 3;
                 focal_resolution_y[1] = focal_resolution_y[1] * 3;
             }
-
-	    //anamorphic footage
-	    if(rawH > rawW)
-	    {
-	        par[1] = 1;
-	    }
         }
 
         //we get the active area of the original raw source, not the recorded data, so overwrite the active area if the recorded data does

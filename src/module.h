@@ -184,7 +184,6 @@ typedef struct
     int valid;
     int enabled;
     int error;
-    int is_core;
 } module_entry_t;
 
 

@@ -73,7 +73,7 @@
 #include "../mlv_rec/mlv_rec_interface.h"
 
 static CONFIG_INT("isoless.hdr", isoless_hdr, 0);
-CONFIG_INT("isoless.iso", isoless_recovery_iso, 0);
+static CONFIG_INT("isoless.iso", isoless_recovery_iso, 3);
 static CONFIG_INT("isoless.alt", isoless_alternate, 0);
 static CONFIG_INT("isoless.prefix", isoless_file_prefix, 0);
 
@@ -89,9 +89,6 @@ extern WEAK_FUNC(ret_0) float raw_to_ev(int ev);
 int dual_iso_set_enabled(bool enabled);
 int dual_iso_is_enabled();
 int dual_iso_is_active();
-
-static int rawpreview = 0; /* coming from mlv_lite.c */
-extern int WEAK_FUNC(rawpreview) preview_mode;
 
 /* camera-specific constants */
 
@@ -184,13 +181,6 @@ static void bulk_cb(uint32_t *parm, uint32_t address, uint32_t length)
 {
     *parm = 0;
 }
-
-/* Photo mode: always enable */
-/* LiveView: only enable in movie mode */
-/* Refresh the parameters whenever you change something from menu */
-static int enabled_lv = 0;
-static int enabled_lv2 = 0;
-static int enabled_ph = 0;
 
 static int isoless_enable(uint32_t start_addr, int size, int count, uint32_t* backup)
 {
@@ -303,6 +293,12 @@ static int isoless_disable(uint32_t start_addr, int size, int count, uint32_t* b
 
 static struct semaphore * isoless_sem = 0;
 
+/* Photo mode: always enable */
+/* LiveView: only enable in movie mode */
+/* Refresh the parameters whenever you change something from menu */
+static int enabled_lv = 0;
+static int enabled_ph = 0;
+
 /* thread safe */
 static unsigned int isoless_refresh(unsigned int ctx)
 {
@@ -326,17 +322,12 @@ static unsigned int isoless_refresh(unsigned int ctx)
     int setting_changed = (sig != prev_sig);
     prev_sig = sig;
     
-    //Will update iso/iso2 in lens.c
-    if (isoless_hdr) enabled_lv2 = 1;
-    if (!isoless_hdr) enabled_lv2 = 0;
-    
-    //Hack to preview base iso while not recording but apply scanlines when in framing mode //enabled_lv needed or cache problems
-    if ((enabled_lv && !RECORDING && preview_mode == 1) || (lv_dispsize == 10) || (enabled_lv && setting_changed) || (enabled_lv && !RECORDING && preview_mode != 1 && get_halfshutter_pressed()))
+    if (enabled_lv && (setting_changed || lv_dispsize == 10))
     {
         isoless_disable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
         enabled_lv = 0;
     }
-        
+    
     if (enabled_ph && setting_changed)
     {
         isoless_disable(PHOTO_CMOS_ISO_START, PHOTO_CMOS_ISO_SIZE, PHOTO_CMOS_ISO_COUNT, backup_ph);
@@ -350,14 +341,12 @@ static unsigned int isoless_refresh(unsigned int ctx)
         if (err) { NotifyBox(10000, "ISOless PH err(%d)", err); enabled_ph = 0; }
     }
     
-    //differ routines real-time and framing
-    if ((isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && preview_mode == 1 && RECORDING) || (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && preview_mode != 1 && !get_halfshutter_pressed() && lv_dispsize != 10))
+    if (isoless_hdr && raw_mv && !enabled_lv && FRAME_CMOS_ISO_START && lv_dispsize != 10)
     {
         enabled_lv = 1;
         int err = isoless_enable(FRAME_CMOS_ISO_START, FRAME_CMOS_ISO_SIZE, FRAME_CMOS_ISO_COUNT, backup_lv);
         if (err) { NotifyBox(10000, "ISOless LV err(%d)", err); enabled_lv = 0; }
     }
-    
 
     if (setting_changed)
     {
@@ -412,7 +401,7 @@ int dual_iso_is_enabled()
 
 int dual_iso_is_active()
 {
-    return is_movie_mode() ? (enabled_lv || enabled_lv2) : enabled_ph;
+    return is_movie_mode() ? enabled_lv : enabled_ph;
 }
 
 int dual_iso_get_recovery_iso()
@@ -565,7 +554,10 @@ static MENU_UPDATE_FUNC(isoless_check)
 
     if (mvi && !FRAME_CMOS_ISO_START)
         MENU_SET_WARNING(MENU_WARN_NOT_WORKING, "Dual ISO does not work in movie mode on your camera.");
-    
+
+    if (mvi &&lv_dispsize == 10)
+		MENU_SET_WARNING(MENU_WARN_NOT_WORKING, "Dual ISO is temporarily disabled in x10 mode to check focus easily.");
+
     if (!raw)
         menu_set_warning_raw(entry, info);
 }
@@ -691,16 +683,67 @@ static void isoless_mlv_rec_cbr (uint32_t event, void *ctx, mlv_hdr_t *hdr)
     dual_iso_block->blockSize = sizeof(mlv_diso_hdr_t);
     
     /* and fill with data */
-    
     dual_iso_block->dualMode = dual_iso_is_active();
     dual_iso_block->isoValue = isoless_recovery_iso;
     
-    //If selecting iso other way around, to get iso 100 a hcak is needed
-    if (isoless_recovery_iso == 0 && isoless_hdr > isoless_recovery_iso) dual_iso_block->isoValue = 0xfffffff4;
-    if (isoless_hdr > isoless_recovery_iso && isoless_recovery_iso > 0) dual_iso_block->isoValue = isoless_hdr;
-    
     /* finally pass it to mlv_rec which will free the block when it has been processed */
     mlv_rec_queue_block((mlv_hdr_t *)dual_iso_block);
+}
+
+/* FRAME_CMOS_ISO_START and PHOTO_CMOS_ISO_START changes among some 700D bodies 
+ * FRAME_CMOS_ISO_START and PHOTO_CMOS_ISO_START seem to always hold 0x14CE0803 
+ * Let's check the correct addresses and set them, this method seems to work, 
+ * this method seems to work, and it handle two reported cases for 700D ISOless */
+void SetFRAME_ISO_START()
+{
+    if (is_650d)
+    {
+        if (*(volatile uint32_t*)0x404A038E == 0x14CE0803)
+        {
+            FRAME_CMOS_ISO_START = 0x404A038E;
+        }
+        else
+        {
+            FRAME_CMOS_ISO_START = 0x404A048E;
+        }
+    }
+    if (is_700d)
+    {
+        if (*(volatile uint32_t*)0x4045368E == 0x14CE0803)
+        {
+            FRAME_CMOS_ISO_START = 0x4045368E;
+        }
+        else
+        {
+            FRAME_CMOS_ISO_START = 0x4045328E;
+        }
+    }
+}
+
+void SetPHOTO_ISO_START()
+{
+    if (is_650d)
+    {
+        if (*(volatile uint32_t*)0x4049F144 == 0x14CE0803)
+        {
+            FRAME_CMOS_ISO_START = 0x4049F144;
+        }
+        else
+        {
+            FRAME_CMOS_ISO_START = 0x4049F244;
+        }
+    }
+    if (is_700d)
+    {
+        if (*(volatile uint32_t*)0x40452444 == 0x14CE0803)
+        {
+            PHOTO_CMOS_ISO_START = 0x40452444;
+        }
+        else
+        {
+            PHOTO_CMOS_ISO_START = 0x40452044;
+        }
+    }
 }
 
 static unsigned int isoless_init()
@@ -923,7 +966,7 @@ static unsigned int isoless_init()
     }
     else if (is_camera("700D", "1.1.5"))
     {
-        is_700d = 1;    
+        is_700d = 1;
 
         FRAME_CMOS_ISO_START = 0x4045328E;
         FRAME_CMOS_ISO_COUNT =          6;
@@ -936,6 +979,9 @@ static unsigned int isoless_init()
         CMOS_ISO_BITS = 3;
         CMOS_FLAG_BITS = 2;
         CMOS_EXPECTED_FLAG = 3;
+
+        SetFRAME_ISO_START();
+        SetPHOTO_ISO_START();
     }
     else if (is_camera("650D", "1.0.4"))
     {
@@ -952,6 +998,9 @@ static unsigned int isoless_init()
         CMOS_ISO_BITS = 3;
         CMOS_FLAG_BITS = 2;
         CMOS_EXPECTED_FLAG = 3;
+
+        SetFRAME_ISO_START();
+        SetPHOTO_ISO_START();
     }
 
     else if (is_camera("EOSM", "2.0.2"))

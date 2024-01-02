@@ -67,9 +67,9 @@ end
   msleep(1000)
  end
 
-  menu.set("raw video", "Rec trigger", "Half-shutter: pre only")
+  menu.set("RAW video", "Rec trigger", "Half-shutter: pre only")
   msleep(1000)
-  menu.set("raw video", "Pre-record", "1 frame")
+  menu.set("RAW video", "Pre-record", "1 frame")
   menu.set("presets", "frame stop", "OFF")
   menu.set("presets", "frame burst", "0")
   menu.set("presets", "iso average", "OFF")
@@ -109,7 +109,7 @@ end
       end
 
       if movie.recording == false then
-      menu.set("raw video", "Rec trigger", "OFF")
+      menu.set("RAW video", "Rec trigger", "OFF")
        if mymenu.submenu["loop this"].value < 1 then 
 	 do return end 
        end
@@ -136,7 +136,7 @@ end
       while movie.recording == true and menu.visible == false do
       msleep(1000)
       end
-      menu.set("raw video", "Rec trigger", "OFF")
+      menu.set("RAW video", "Rec trigger", "OFF")
         if mymenu.submenu["loop this"].value > 0 then
         mymenu.submenu["loop this"].value = mymenu.submenu["loop this"].value - 1
         restart() 
@@ -197,8 +197,8 @@ end
     end
 
 -- turn off these as frame burst and iso average will take a hit if accidentally on
-  menu.set("raw video", "Pre-record", "OFF")
-  menu.set("raw video", "Rec trigger", "OFF")
+  menu.set("RAW video", "Pre-record", "OFF")
+  menu.set("RAW video", "Rec trigger", "OFF")
   msleep(300)
 
 -- when liveview find itself sleeping
@@ -323,8 +323,8 @@ end
     end
 
 -- turn off these as frame burst and iso average will take a hit if accidentally on
-  menu.set("raw video", "Pre-record", "OFF")
-  menu.set("raw video", "Rec trigger", "OFF")
+  menu.set("RAW video", "Pre-record", "OFF")
+  menu.set("RAW video", "Rec trigger", "OFF")
   menu.set("presets", "frame burst", "0")
   menu.set("presets", "frame stop", "3 frames")
   menu.set("presets", "iso average", "iso100/400/1600")
@@ -452,8 +452,8 @@ end
     end
 
 -- turn off these as frame burst and iso average will take a hit if accidentally on
-  menu.set("raw video", "Pre-record", "OFF")
-  menu.set("raw video", "Rec trigger", "OFF")
+  menu.set("RAW video", "Pre-record", "OFF")
+  menu.set("RAW video", "Rec trigger", "OFF")
   menu.set("presets", "frame burst", "0")
   menu.set("presets", "frame stop", "2 frames")
   menu.set("presets", "iso average", "iso100/400/1600")
