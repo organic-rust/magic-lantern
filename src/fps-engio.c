@@ -236,11 +236,9 @@ static void fps_read_current_timer_values();
     #define FPS_TIMER_B_MIN (fps_timer_b_orig - (ZOOM ? 44 : MV720 ? 0 : 70)) /* you can push LiveView until 68fps (timer_b_orig - 50), but good luck recording that */
 #elif defined(CONFIG_EOSM)
     #define TG_FREQ_BASE 32000000
-    #define FPS_TIMER_A_MIN (ZOOM ? 716 : MV1080CROP ? 532 : 520)
+    #define FPS_TIMER_A_MIN (ZOOM ? 676 : MV1080CROP ? 572 : 520)
     #undef FPS_TIMER_B_MIN
-    #define FPS_TIMER_B_MIN ( \
-    RECORDING_H264 ? (MV1080CROP ? 1750 : MV720 ? 990 : 1970) \
-                   : (ZOOM || MV1080CROP ? 1336 : 1970))
+    #define FPS_TIMER_B_MIN (ZOOM || MV1080 || MV1080CROP ? 1230 : MV720 || (lv && lv_dispsize==1 && !is_movie_mode()) ? 990 : 1970)
 #elif defined(CONFIG_6D)
     #define TG_FREQ_BASE 25600000
     #define FPS_TIMER_A_MIN (fps_timer_a_orig - (ZOOM ? 22 : MV720 ? 10 : 34) ) //, ZOOM ? 708 : 512)
@@ -254,14 +252,14 @@ static void fps_read_current_timer_values();
     #define FPS_TIMER_A_MIN (fps_timer_a_orig)
 #elif defined(CONFIG_100D)
     #define TG_FREQ_BASE 32000000
-    #define FPS_TIMER_A_MIN (ZOOM ? 724 : MV1080CROP ? 540 : 520)
+    #define FPS_TIMER_A_MIN (ZOOM ? 676 : MV1080CROP ? 540 : 520)
     #undef FPS_TIMER_B_MIN
     // no need to cause confusions as recording speed cannot handle such high fps in crop mode
     // (ZOOM || MV1080CROP ? 1288 : 1970)) <-- these are ok while not recording.
     // Hybrid CMOS AF II uses 60fps by default in LV/MV for the camera display
     // to achieve a "snappy" autofocus by doubling the fps
     // MV720 is not LV so we need to extend the definition for the LCD.
-    #define FPS_TIMER_B_MIN (ZOOM ? 1450 : MV1080CROP ? 1750 : MV720 || (lv && lv_dispsize==1 && !is_movie_mode()) ? 990 : 1970)
+    #define FPS_TIMER_B_MIN (ZOOM || MV1080 || MV1080CROP ? 1288 : MV720 || (lv && lv_dispsize==1 && !is_movie_mode()) ? 990 : 1970)
 #elif defined(CONFIG_500D)
     #define TG_FREQ_BASE 32000000    // not 100% sure
     #define FPS_TIMER_A_MIN MIN(fps_timer_a_orig - (ZOOM ? 0 : 10), ZOOM ? 1400 : video_mode_resolution == 0 ? 1284 : 1348)
@@ -487,9 +485,6 @@ int get_current_shutter_reciprocal_x1000()
     float shutter = frame_duration * (max - blanking) / max;
     return (int)(1.0 / shutter * 1000);
 
-// ToDo: Cleanup 70D once fps override feature is fixed
-// till then use the fallback. Do it this way to have fast ettr
-// and keep frame_shutter timer enabled in consts.h
 #elif defined(FRAME_SHUTTER_TIMER)
     int timer = FRAME_SHUTTER_TIMER;
 
@@ -752,9 +747,7 @@ static void fps_setup_timerB(int fps_x1000)
         timerB -= 1;
         written_value_b = PACK(timerB, fps_reg_b_orig);
         EngDrvOutFPS(FPS_REGISTER_B, written_value_b);
-        #ifdef CONFIG_70D
-        EngDrvOutFPS(FPS_REGISTER_B_DUAL_PIXEL, written_value_b);
-        #endif
+	EngDrvOutFPS(FPS_REGISTER_B_DUAL_PIXEL, written_value_b);
         fps_needs_updating = 0;
     #if defined(NEW_FPS_METHOD)
     }
@@ -1055,9 +1048,7 @@ static void fps_register_reset()
         written_value_b = 0;
         EngDrvOutFPS(FPS_REGISTER_A, fps_reg_a_orig);
         EngDrvOutFPS(FPS_REGISTER_B, fps_reg_b_orig);
-        #ifdef CONFIG_70D
-        EngDrvOutFPS(FPS_REGISTER_B_DUAL_PIXEL, fps_reg_b_orig);
-        #endif
+	EngDrvOutFPS(FPS_REGISTER_B_DUAL_PIXEL, fps_reg_b_orig);
         EngDrvOutFPS(FPS_REGISTER_CONFIRM_CHANGES, 1);
     }
 }
@@ -1401,7 +1392,7 @@ static MENU_UPDATE_FUNC(fps_const_expo_update)
 static struct menu_entry fps_menu[] = {
     #ifdef FEATURE_FPS_OVERRIDE
     {
-        .name = "FPS override", 
+        .name = "fps override", 
         .priv = &fps_override,
         .select = fps_enable_disable,
         .update = fps_print,
@@ -1659,9 +1650,7 @@ void fps_update_timers_from_evfstate()
     {
         EngDrvOutLV(FPS_REGISTER_A, fps_timerA_override);
         EngDrvOutLV(FPS_REGISTER_B, fps_timerB_override);
-        #ifdef CONFIG_70D
-        EngDrvOutLV(FPS_REGISTER_B_DUAL_PIXEL, fps_timerB_override);
-        #endif
+	EngDrvOutLV(FPS_REGISTER_B_DUAL_PIXEL, fps_timerB_override);
         EngDrvOutLV(FPS_REGISTER_CONFIRM_CHANGES, 1);
     }
     fps_timers_updated = 1;

@@ -3,9 +3,9 @@
 #include "dryos.h"
 #include "math.h"
 
-uint32_t powi(uint32_t base, uint32_t power)
+int powi(int base, int power)
 {
-    uint32_t result = 1;
+    int result = 1;
     while (power)
     {
         if (power & 1)
@@ -16,16 +16,16 @@ uint32_t powi(uint32_t base, uint32_t power)
     return result;
 }
 
-uint32_t log2i(uint32_t x)
+int log2i(int x)
 {
-    uint32_t result = 0;
+    int result = 0;
     while (x >>= 1) result++;
     return result;
 }
 
-uint32_t log10i(uint32_t x)
+int log10i(int x)
 {
-    uint32_t result = 0;
+    int result = 0;
     while(x /= 10) result++;
     return result;
 }

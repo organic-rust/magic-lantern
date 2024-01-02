@@ -174,12 +174,13 @@ static CONFIG_INT( "transparent.overlay.y", transparent_overlay_offy, 0);
 static CONFIG_INT( "transparent.overlay.autoupd", transparent_overlay_auto_update, 0);
 static int transparent_overlay_hidden = 0;
 
-static CONFIG_INT( "global.draw",   global_draw, 3 );
+/* starts in liveview mode instead EOSM */
+static CONFIG_INT( "global.draw",   global_draw, 1 );
 
 #define ZEBRAS_IN_QUICKREVIEW (global_draw > 1)
 #define ZEBRAS_IN_LIVEVIEW (global_draw & 1)
 
-static CONFIG_INT( "zebra.draw",    zebra_draw, 1 );
+static CONFIG_INT( "zebra.draw",    zebra_draw, 0 );
 #ifdef FEATURE_ZEBRA_FAST
 static CONFIG_INT( "zebra.colorspace",    zebra_colorspace,   2 );// luma/rgb/lumafast
 #else
@@ -195,7 +196,8 @@ static CONFIG_INT( "zebra.raw.under", zebra_raw_underexposure,  1 );
 #define MZ_TAKEOVER_ZOOM_IN_BTN 3
 #define MZ_ALWAYS_ON            4
 static CONFIG_INT( "zoom.overlay", zoom_overlay_enabled, 0);
-static CONFIG_INT( "zoom.overlay.trig", zoom_overlay_trigger_mode, MZ_TAKEOVER_ZOOM_IN_BTN);
+/* starting point OFF EOSM */
+static CONFIG_INT( "zoom.overlay.trig", zoom_overlay_trigger_mode, 1);
 static CONFIG_INT( "zoom.overlay.size", zoom_overlay_size, 1);
 static CONFIG_INT( "zoom.overlay.x", zoom_overlay_x, 1);
 #ifdef CONFIG_5D3
@@ -358,7 +360,8 @@ static CONFIG_INT( "clear.preview.delay", clearscreen_delay, 1000); // ms
 //~ #define clearscreen (clearscreen_enabled ? clearscreen_mode+1 : 0)
 
 static CONFIG_INT( "spotmeter.size",        spotmeter_size, 5 );
-static CONFIG_INT( "spotmeter.draw",        spotmeter_draw, 1 );
+/* starting point OFF EOSM */
+static CONFIG_INT( "spotmeter.draw",        spotmeter_draw, 0 );
 static CONFIG_INT( "spotmeter.formula",     spotmeter_formula, 0 ); // 0 percent, 1 IRE AJ, 2 IRE Piers
 static CONFIG_INT( "spotmeter.position",        spotmeter_position, 1 ); // fixed / attached to AF frame
 
@@ -943,7 +946,7 @@ waveform_draw_image(
 )
 {
     if (!waveform) return;
-
+    
     if (!PLAY_OR_QR_MODE)
     {
         if (!lv_luma_is_accurate()) return;
@@ -1009,6 +1012,16 @@ waveform_draw_image(
                 // Draw the pixel, rounding down to the nearest
                 // quad word write (and then nop to avoid err70).
                 *(uint32_t*) ALIGN32(row + i) = pixel;
+                #ifdef CONFIG_500D // err70?!
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                asm( "nop" );
+                #endif
                 pixel = 0;
             }
         }
@@ -3127,6 +3140,12 @@ void copy_zebras_from_mirror()
             uint32_t m = M[BM(j,i)/4];
             if (p != 0) continue;
             B[BM(j,i)/4] = m & ~0x80808080;
+            #ifdef CONFIG_500D
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            #endif
         }
     }
 }
@@ -3142,6 +3161,12 @@ void clear_zebras_from_mirror()
             uint8_t m = M[BM(j,i)];
             if (m & 0x80) continue;
             M[BM(j,i)] = 0;
+            #ifdef CONFIG_500D
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            #endif
         }
     }
 }
@@ -3321,7 +3346,7 @@ static void draw_zoom_overlay(int dirty)
     if (!get_global_draw()) return;
     //~ if (gui_menu_shown()) return;
     if (!bmp_is_on()) return;
-    if (lv_dispsize > 5 || lv_dispsize < 1) return; // Magic Zoom will work in x1 and x5 modes
+    if (lv_dispsize != 1) return;
     //~ if (get_halfshutter_pressed() && clearscreen != 2) return;
     if (RECORDING_H264_STARTING) return;
     
@@ -3341,7 +3366,7 @@ static void draw_zoom_overlay(int dirty)
 
     // select buffer where MZ should be written (camera-specific, guesswork)
     #if defined(CONFIG_5D2) || defined(CONFIG_EOSM) || defined(CONFIG_50D)
-    #warning FIXME: this method uses busy waiting, which causes high CPU usage and overheating when using Magic Zoom
+    //warning FIXME: this method uses busy waiting, which causes high CPU usage and overheating when using Magic Zoom
     void busy_vsync(int hd, int timeout_ms)
     {
         int timeout_us = timeout_ms * 1000;
@@ -3735,7 +3760,7 @@ void draw_histogram_and_waveform(int allow_play)
     if (is_zoom_mode_so_no_zebras()) return;
         
 #ifdef FEATURE_WAVEFORM
-    if (waveform_draw)
+    if(waveform_draw)
     {
         #ifdef CONFIG_4_3_SCREEN
         if (PLAY_OR_QR_MODE && WAVEFORM_FACTOR == 1)
@@ -3836,6 +3861,7 @@ clearscreen_loop:
         cropmark_step();
         #endif
     }
+
 }
 
 TASK_CREATE( "cls_task", clearscreen_task, 0, 0x1a, 0x2000 );
@@ -4585,15 +4611,6 @@ PROP_HANDLER(PROP_LV_ACTION)
     
     #ifdef FEATURE_LV_ZOOM_SETTINGS
     zoom_sharpen_step();
-    #endif
-
-    #ifdef CONFIG_500D
-    if (buf[0] == 0 && !is_manual_focus())
-    {
-        /* disable the "Perform autofocus with AE lock <*> button" message in LiveView */
-        extern void FirstWarningTimer_CBR(void);
-        FirstWarningTimer_CBR();
-    }
     #endif
 }
 

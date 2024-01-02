@@ -114,9 +114,8 @@ case $(ps -o stat= -p $$) in
   *) echo $0 "$@" "&" ;;    # Running in background
 esac
 
-# also print the command-line of arm-none-eabi-gdb / gdb-multiarch, if any
-# note: some systems limit process names to 15 chars
-gdb_pid=$(pgrep -P $PPID -n arm-none-eabi-g || pgrep -P $PPID -n gdb-multiarch)
+# also print the command-line of arm-none-eabi-gdb, if any
+gdb_pid=$(pgrep -nx arm-none-eabi-gdb)
 if [ "$gdb_pid" != "" ]; then
   gdb_cmd=$(ps -p $gdb_pid -o args | tail -n1)
   case $(ps -o stat= -p $gdb_pid) in

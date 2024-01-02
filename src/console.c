@@ -322,7 +322,8 @@ TASK_CREATE( "console_task", console_task, 0, 0x1d, 0x1000 );
 int printf(const char* fmt, ...)
 {
     /* when called from init_task, 512 bytes are enough to cause stack overflow */
-    int buf_size = (streq(current_task->name, "init")) ? 64 : 512;
+    extern int ml_started;
+    int buf_size = (ml_started) ? 512 : 64;
     char* buf = alloca(buf_size);
     
     va_list         ap;

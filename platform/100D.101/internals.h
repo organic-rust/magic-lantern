@@ -131,9 +131,6 @@
 #define CONFIG_RAW_PHOTO
 #define CONFIG_RAW_LIVEVIEW
 
-/** Disable canon drawing in LiveView, mainly for having clean preview when using crop_rec presets **/
-#define CONFIG_KILL_FLICKER
-
 /** Hide Canon bottom bar from DebugMsg hook */
 #define CONFIG_LVAPP_HACK_DEBUGMSG
 

@@ -172,10 +172,8 @@
 #define DISPLAY_TRAP_FOCUS_MSG_BLANK "          "
 
 // In bindGUIEventFromGUICBR, look for "LV Set" => arg0 = 8
-// Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something) => valid values from 91 to 103
-// 100 shows the same dialog as 97 on 700D/650D or 99 on EOSM
-// 94 shows the same dialog as 91 on 700D/650D
-#define GUIMODE_ML_MENU (RECORDING ? 100 : lv ? 94 : 2)
+// Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something)
+#define GUIMODE_ML_MENU (RECORDING ? 0 : lv ? 94 : 2) // any from 88...98 ?!
 #define NUM_PICSTYLES 10
 
 #define FLASH_MAX_EV 3
@@ -241,7 +239,7 @@
 #define FRAME_SHUTTER_TIMER (*(uint16_t*)(VIDEO_PARAMETERS_SRC_3+6))
 #define FRAME_BV ((int)FRAME_SHUTTER + (int)FRAME_APERTURE - (int)FRAME_ISO)
 
-//FIXME: Shutter blanking regsiters addreses are dynamic on 100D
+/* let´s roll below numbers for now and see what happens */
 /* https://www.magiclantern.fm/forum/index.php?topic=19300.msg208549#msg208549 */
 #define FRAME_SHUTTER_BLANKING_ZOOM   (*(uint16_t*)0x41697bc4) // ADTG register 805f
 #define FRAME_SHUTTER_BLANKING_NOZOOM (*(uint16_t*)0x41697bc8) // ADTG register 8061

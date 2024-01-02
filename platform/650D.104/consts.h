@@ -153,9 +153,8 @@
 #define DISPLAY_TRAP_FOCUS_MSG_BLANK "          "
 
 // In bindGUIEventFromGUICBR, look for "LV Set" => arg0 = 8
-// Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something) => valid values from 88 to 98
-// 97 and 91 show the same dialog as on 700D
-#define GUIMODE_ML_MENU (RECORDING ? 97 : lv ? 91 : 2)
+// Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something)
+#define GUIMODE_ML_MENU (RECORDING ? 0 : lv ? 90 : 2) // any from 88...98 ?!
 #define NUM_PICSTYLES 10
 
 #define FLASH_MAX_EV 3
@@ -225,11 +224,12 @@
 #define FRAME_SHUTTER_TIMER (*(uint16_t*)(VIDEO_PARAMETERS_SRC_3+6))
 #define FRAME_BV ((int)FRAME_SHUTTER + (int)FRAME_APERTURE - (int)FRAME_ISO)
 
-//FIXME: Shutter blanking regsiters addreses are dynamic on 650D https://www.magiclantern.fm/forum/index.php?topic=19300.msg208547#msg208547
+// https://bitbucket.org/hudson/magic-lantern/commits/58d67357be15201ba9b4cd08c47628c3cede3f8d?at=crop_rec_4k#comment-6978283
 #define FRAME_SHUTTER_BLANKING_ZOOM   (*(uint16_t*)0x4049fb18) // ADTG register 805f
 #define FRAME_SHUTTER_BLANKING_NOZOOM (*(uint16_t*)0x4049fb1c) // ADTG register 8061
 #define FRAME_SHUTTER_BLANKING_READ   (lv_dispsize > 1 ? FRAME_SHUTTER_BLANKING_NOZOOM : FRAME_SHUTTER_BLANKING_ZOOM) /* when reading, use the other mode, as it contains the original value (not overriden) */
 #define FRAME_SHUTTER_BLANKING_WRITE  (lv_dispsize > 1 ? &FRAME_SHUTTER_BLANKING_ZOOM : &FRAME_SHUTTER_BLANKING_NOZOOM)
+
 
 // see "Malloc Information"
 #define MALLOC_STRUCT 0x4b428

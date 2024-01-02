@@ -153,10 +153,8 @@
     #define DISPLAY_TRAP_FOCUS_MSG_BLANK "          "
 
     // In bindGUIEventFromGUICBR, look for "LV Set" => arg0 = 8
-    // Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something) => valid values from 88 to 98
-    // 97 works both in standby and while recording H.264, allows scrollwheel events, only shows a "return" touch button
-    // 91 works better in standby, as 97 may display the exposure compensation bar over ML menu
-    #define GUIMODE_ML_MENU (RECORDING ? 97 : lv ? 91 : 2)
+    // Next, in SetGUIRequestMode, look at what code calls NotifyGUIEvent(8, something)
+    #define GUIMODE_ML_MENU (RECORDING ? 0 : lv ? 90 : 2) // any from 88...98 ?!
     #define NUM_PICSTYLES 10
 
     #define FLASH_MAX_EV 3
@@ -227,9 +225,8 @@
 #define FRAME_SHUTTER_TIMER (*(uint16_t*)(VIDEO_PARAMETERS_SRC_3+6))
 #define FRAME_BV ((int)FRAME_SHUTTER + (int)FRAME_APERTURE - (int)FRAME_ISO)
 
-//FIXME: Shutter blanking regsiters addreses are dynamic on 700D https://www.magiclantern.fm/forum/index.php?topic=19300.msg208547#msg208547
-#define FRAME_SHUTTER_BLANKING_ZOOM   (*(uint16_t*)0x40452d18) // ADTG register 805f
-#define FRAME_SHUTTER_BLANKING_NOZOOM (*(uint16_t*)0x40452d1c) // ADTG register 8061
+#define FRAME_SHUTTER_BLANKING_ZOOM   (*(uint16_t*)0x40452918) // ADTG register 805f
+#define FRAME_SHUTTER_BLANKING_NOZOOM (*(uint16_t*)0x4045291c) // ADTG register 8061
 #define FRAME_SHUTTER_BLANKING_READ   (lv_dispsize > 1 ? FRAME_SHUTTER_BLANKING_NOZOOM : FRAME_SHUTTER_BLANKING_ZOOM) /* when reading, use the other mode, as it contains the original value (not overriden) */
 #define FRAME_SHUTTER_BLANKING_WRITE  (lv_dispsize > 1 ? &FRAME_SHUTTER_BLANKING_ZOOM : &FRAME_SHUTTER_BLANKING_NOZOOM)
 

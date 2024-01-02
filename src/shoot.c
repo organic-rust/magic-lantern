@@ -83,10 +83,10 @@ int display_idle()
     extern thunk ShootOlcApp_handler;
     if (lv) return liveview_display_idle();
     else return
-        #ifndef CONFIG_EOSM
-        gui_state == GUISTATE_IDLE &&
-        #endif
-        !gui_menu_shown() &&
+#ifndef CONFIG_EOSM
+    gui_state == GUISTATE_IDLE &&
+#endif
+    !gui_menu_shown() &&
         ((!DISPLAY_IS_ON && CURRENT_GUI_MODE == 0) || (intptr_t)get_current_dialog_handler() == (intptr_t)&ShootOlcApp_handler);
 }
 
@@ -686,12 +686,12 @@ PROP_HANDLER(PROP_LV_DISPSIZE)
     /* note: 0x81 is a special screen before zooming in, on newer cameras */
     int zoom = buf[0];
     int new_zoom = zoom;
-
+    
     ASSERT(zoom == 1 || zoom == 0x81 || zoom == 5 || zoom == 10);
     zoom_sharpen_step();
     
     if (zoom == 1) zoom_was_triggered_by_halfshutter = 0;
-
+    
 #ifdef FEATURE_LV_ZOOM_SETTINGS
 #ifdef CONFIG_ZOOM_X1
     /* FIXME: this duplicates functionality in handle_zoom_x5_x10
@@ -699,22 +699,22 @@ PROP_HANDLER(PROP_LV_DISPSIZE)
      * for touch-screen controls, this works reasonably well,
      * but still stays in the disabled zoom mode for a split-second */
     if (RECORDING) return;
-
+    
     if (zoom_disable_x1 && zoom == 0x81)
     {
         new_zoom = (zoom_disable_x5 ? 10 : 5);
     }
-
+    
     if (zoom_disable_x5 && zoom == 5)
     {
         new_zoom = 10;
     }
-
+    
     if (zoom_disable_x10 && zoom == 10)
     {
         new_zoom = 1;
     }
-
+    
     if (new_zoom != zoom)
     {
         prop_request_change(PROP_LV_DISPSIZE, &new_zoom, 4);
@@ -1942,6 +1942,7 @@ void kelvin_n_gm_auto()
     {
         kelvin_auto_flag = 1;
         wbs_gm_auto_flag = 1;
+        if (raw_lv_is_enabled() && is_movie_mode()) wbs_gm_auto_flag = 0;
     }
 }
 
@@ -2459,7 +2460,7 @@ static void zoom_halfshutter_step()
 #ifdef CONFIG_LIVEVIEW
     if (!lv) return;
     if (RECORDING) return;
-
+    
     if (!is_manual_focus())
     {
         /* AF enabled? we should not interrupt it while autofocusing */
@@ -2470,14 +2471,14 @@ static void zoom_halfshutter_step()
         int hs = get_halfshutter_pressed();
         int hs_just_pressed = hs && !prev_hs;
         prev_hs = hs;
-
+        
         if (hs_just_pressed)
         {
             /* half-shutter pressed, expect AF to start soon */
             press_timestamp = get_ms_clock();
             return;
         }
-
+        
         if (lv_focus_status != 1)
         {
             /* autofocusing */
@@ -2486,26 +2487,26 @@ static void zoom_halfshutter_step()
             press_timestamp = 0;
             return;
         }
-
+        
         if (press_timestamp && get_ms_clock() - press_timestamp < 700)
         {
             /* too early to tell whether AF started or not */
             return;
         }
-
+        
         if (!hs)
         {
             info_led_off();
             autofocused = 0;
         }
-
+        
         if (autofocused)
         {
             /* once it autofocused, we can no longer switch to x5 zoom (why, Canon?) */
             return;
         }
     }
-
+    
     if (zoom_halfshutter)
     {
         int hs = get_halfshutter_pressed();
@@ -2591,58 +2592,15 @@ int handle_zoom_x5_x10(struct event * event)
     if (!lv) return 1;
     if (RECORDING) return 1;
     
+    if (!zoom_disable_x5 && !zoom_disable_x10) return 1;
     #ifdef CONFIG_600D
     if (get_disp_pressed()) return 1;
     #endif
-
+    
     if (event->param == BGMT_PRESS_ZOOM_IN && liveview_display_idle() && !gui_menu_shown())
     {
-        /* this only covers zoom modes outside the normal sequence
-         * i.e. non-zoom -> x5 -> x10 or non-zoom -> x1 -> x5 -> x10 */
-        int new_zoom = 0;
-
-        switch (lv_dispsize)
-        {
-            case 1:
-#ifdef CONFIG_ZOOM_X1
-                if (zoom_disable_x1) {
-                    /* jump directly into x5/x10 (skip x1) */
-                    new_zoom = (zoom_disable_x5 ? 10 : 5);
-                }
-#else
-                if (zoom_disable_x5) {
-                    /* jump directly into x10 (skip x5) */
-                    new_zoom = 10;
-                }
-#endif
-                break;
-
-#ifdef CONFIG_ZOOM_X1
-            case 0x81:
-                if (zoom_disable_x5) {
-                    /* jump from x1 to x10 (skip x5) */
-                    new_zoom = 10;
-                }
-                break;
-#endif
-
-            case 5:
-                if (zoom_disable_x10) {
-                    /* skip x10, jump from x5 directly into non-zoom */
-                    new_zoom = 1;
-                }
-                break;
-
-            case 10:
-                /* we never disable the non-zoom mode, nothing to do */
-                break;
-        }
-
-        if (new_zoom)
-        {
-            prop_request_change(PROP_LV_DISPSIZE, &new_zoom, 4);
-            return 0;
-        }
+        set_lv_zoom(lv_dispsize > 1 ? 1 : zoom_disable_x5 ? 10 : 5);
+        return 0;
     }
     return 1;
 }
@@ -4104,18 +4062,6 @@ struct menu_entry tweak_menus_shoot[] = {
         .help = "Disable x5 or x10, boost contrast/sharpness...",
         .depends_on = DEP_LIVEVIEW,
         .children =  (struct menu_entry[]) {
-            #ifdef CONFIG_ZOOM_X1
-            {
-                .name = "Zoom x1",
-                .priv = &zoom_disable_x1, 
-                .max = 1,
-                .choices = CHOICES("ON", "Disable"),
-                .select = zoom_x5_x10_toggle,
-                .help = "Disable the screen that lets you move the focus box before zooming",
-                .help2 = "(displayed as 'Zoom x1' on Canon' user interface)",
-                .icon_type = IT_DISABLE_SOME_FEATURE,
-            },
-            #endif
             {
                 .name = "Zoom x5",
                 .priv = &zoom_disable_x5, 
@@ -4206,6 +4152,93 @@ extern int digic_black_level;
 extern MENU_UPDATE_FUNC(digic_black_print);
 
 extern int digic_shadow_lift;
+
+static struct menu_entry expo_menusmovie[] = {
+#ifdef FEATURE_WHITE_BALANCE
+    {
+        .name = "white balance",
+        .update    = kelvin_wbs_display,
+        .select     = kelvin_toggle,
+        .help  = "Adjust Kelvin white balance and GM/BA WBShift.",
+        .help2 = "Advanced: WBShift, RGB multipliers, Push-button WB...",
+        .edit_mode = EM_SHOW_LIVEVIEW,
+        .submenu_width = 700,
+        .children =  (struct menu_entry[]) {
+            {
+                .name = "White Balance",
+                .update    = kelvin_display,
+                .select     = kelvin_toggle,
+                .help = "Adjust Kelvin white balance.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            {
+                .name = "WBShift G/M",
+                .update = wbs_gm_display,
+                .select = wbs_gm_toggle,
+                .min = -9,
+                .max = 9,
+                .icon_type = IT_PERCENT_OFF,
+                .help = "Green-Magenta white balance shift, for fluorescent lights.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            {
+                .name = "WBShift B/A",
+                .update = wbs_ba_display,
+                .select = wbs_ba_toggle,
+                .min = -9,
+                .max = 9,
+                .icon_type = IT_PERCENT_OFF,
+                .help = "Blue-Amber WBShift; 1 unit = 5 mireks on Kelvin axis.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            {
+                .name = "R multiplier",
+                .priv = (void *)(1),
+                .update = wb_custom_gain_display,
+                .select = wb_custom_gain_toggle,
+                .icon_type = IT_PERCENT,
+                .help = "RED channel multiplier, for custom white balance.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            {
+                .name = "G multiplier",
+                .priv = (void *)(2),
+                .update = wb_custom_gain_display,
+                .select = wb_custom_gain_toggle,
+                .icon_type = IT_PERCENT,
+                .help = "GREEN channel multiplier, for custom white balance.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            {
+                .name = "B multiplier",
+                .priv = (void *)(3),
+                .update = wb_custom_gain_display,
+                .select = wb_custom_gain_toggle,
+                .icon_type = IT_PERCENT,
+                .help = "BLUE channel multiplier, for custom white balance.",
+                .edit_mode = EM_SHOW_LIVEVIEW,
+            },
+            /*{
+             .name = "Auto adjust Kelvin",
+             .select = kelvin_auto,
+             .help = "LiveView: adjust Kelvin value once for the current scene."
+             },
+             {
+             .name = "Auto adjust Green-Magenta",
+             .select = wbs_gm_auto,
+             .help = "LiveView: adjust Green-Magenta once for the current scene."
+             },*/
+            {
+                .name = "Auto adjust Kelvin + G/M",
+                .select = kelvin_n_gm_auto,
+                .help = "LiveView: adjust Kelvin and G-M once (Push-button WB).",
+                .depends_on = DEP_LIVEVIEW,
+            },
+            MENU_EOL
+        },
+    },
+#endif
+};
 
 static struct menu_entry expo_menus[] = {
     #ifdef FEATURE_WHITE_BALANCE
@@ -4565,7 +4598,7 @@ void hdr_flag_picture_was_taken()
 
 int hdr_script_get_first_file_number(int skip0)
 {
-    return DCIM_WRAP(get_shooting_card()->file_number + 1 - (skip0 ? 1 : 0));
+    return MOD(get_shooting_card()->file_number + 1 - (skip0 ? 1 : 0), 10000);
 }
 
 // create a post script for HDR bracketing or focus stacking,
@@ -4578,7 +4611,7 @@ void hdr_create_script(int f0, int focus_stack)
     if (snap_sim) return; // no script for virtual shots
     #endif
     
-    int steps = MOD(get_shooting_card()->file_number - f0 + 1, 9999);
+    int steps = MOD(get_shooting_card()->file_number - f0 + 1, 10000);
     if (steps <= 1) return;
 
     char name[100];
@@ -4594,22 +4627,22 @@ void hdr_create_script(int f0, int focus_stack)
     if (hdr_scripts == 1)
     {
         my_fprintf(f, "#!/usr/bin/env bash\n");
-        my_fprintf(f, "\n# %s_%04d.JPG from %s%04d.JPG ... %s%04d.JPG\n\n", focus_stack ? "FST" : "HDR", f0, get_file_prefix(), f0, get_file_prefix(), DCIM_WRAP(f0 + steps - 1));
+        my_fprintf(f, "\n# %s_%04d.JPG from %s%04d.JPG ... %s%04d.JPG\n\n", focus_stack ? "FST" : "HDR", f0, get_file_prefix(), f0, get_file_prefix(), MOD(f0 + steps - 1, 10000));
         my_fprintf(f, "enfuse \"$@\" %s --output=%s_%04d.JPG ", focus_stack ? "--exposure-weight=0 --saturation-weight=0 --contrast-weight=1 --hard-mask" : "", focus_stack ? "FST" : "HDR", f0);
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, "%s%04d.JPG ", get_file_prefix(), DCIM_WRAP(f0 + i));
+            my_fprintf(f, "%s%04d.JPG ", get_file_prefix(), MOD(f0 + i, 10000));
         }
         my_fprintf(f, "\n");
     }
     else if (hdr_scripts == 2)
     {
         my_fprintf(f, "#!/usr/bin/env bash\n");
-        my_fprintf(f, "\n# %s_%04d.JPG from %s%04d.JPG ... %s%04d.JPG with aligning first\n\n", focus_stack ? "FST" : "HDR", f0, get_file_prefix(), f0, get_file_prefix(), DCIM_WRAP(f0 + steps - 1));
+        my_fprintf(f, "\n# %s_%04d.JPG from %s%04d.JPG ... %s%04d.JPG with aligning first\n\n", focus_stack ? "FST" : "HDR", f0, get_file_prefix(), f0, get_file_prefix(), MOD(f0 + steps - 1, 10000));
         my_fprintf(f, "align_image_stack -m -a %s_AIS_%04d", focus_stack ? "FST" : "HDR", f0);
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, " %s%04d.JPG", get_file_prefix(), DCIM_WRAP(f0 + i));
+            my_fprintf(f, " %s%04d.JPG", get_file_prefix(), MOD(f0 + i, 10000));
         }
         my_fprintf(f, "\n");
         my_fprintf(f, "enfuse \"$@\" %s --output=%s_%04d.JPG %s_AIS_%04d*\n", focus_stack ? "--contrast-window-size=9 --exposure-weight=0 --saturation-weight=0 --contrast-weight=1 --hard-mask" : "", focus_stack ? "FST" : "HDR", f0, focus_stack ? "FST" : "HDR", f0);
@@ -4619,12 +4652,12 @@ void hdr_create_script(int f0, int focus_stack)
     {
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, " %s%04d.JPG", get_file_prefix(), DCIM_WRAP(f0 + i));
+            my_fprintf(f, " %s%04d.JPG", get_file_prefix(), MOD(f0 + i, 10000));
         }
     }
     
     FIO_CloseFile(f);
-    NotifyBox(5000, "Saved %s\n%s%04d.JPG ... %s%04d.JPG", name + 17, get_file_prefix(), f0, get_file_prefix(), DCIM_WRAP(f0 + steps - 1));
+    NotifyBox(5000, "Saved %s\n%s%04d.JPG ... %s%04d.JPG", name + 17, get_file_prefix(), f0, get_file_prefix(), MOD(f0 + steps - 1, 10000));
 }
 #endif // HDR/FST
 
@@ -4636,7 +4669,7 @@ void interval_create_script(int f0)
 {
     if (!interval_scripts) return;
     
-    int steps = MOD(get_shooting_card()->file_number - f0 + 1, 9999);
+    int steps = MOD(get_shooting_card()->file_number - f0 + 1, 10000);
     if (steps <= 1) return;
     
     char name[100];
@@ -4675,7 +4708,7 @@ void interval_create_script(int f0)
         my_fprintf(f, "\nmkdir INT_%04d\n", f0);
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, "mv %s%04d.* INT_%04d\n", get_file_prefix(), DCIM_WRAP(f0 + i), f0);
+            my_fprintf(f, "mv %s%04d.* INT_%04d\n", get_file_prefix(), MOD(f0 + i, 10000), f0);
         }
     }
     else if (interval_scripts == 2)
@@ -4683,7 +4716,7 @@ void interval_create_script(int f0)
         my_fprintf(f, "\nMD INT_%04d\n", f0);
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, "MOVE %s%04d.* INT_%04d\n", get_file_prefix(), DCIM_WRAP(f0 + i), f0);
+            my_fprintf(f, "MOVE %s%04d.* INT_%04d\n", get_file_prefix(), MOD(f0 + i, 10000), f0);
         }
     }
     else if(interval_scripts == 3)
@@ -4691,7 +4724,7 @@ void interval_create_script(int f0)
         my_fprintf(f, "\n*** New Sequence ***\n");
         for(int i = 0; i < steps; i++ )
         {
-            my_fprintf(f, "%s%04d.*\n", get_file_prefix(), DCIM_WRAP(f0 + i));
+            my_fprintf(f, "%s%04d.*\n", get_file_prefix(), MOD(f0 + i, 10000));
         }
     }
     
@@ -5467,7 +5500,7 @@ void intervalometer_stop()
     {
         intervalometer_running = 0;
         NotifyBox(2000, "Intervalometer stopped.");
-        interval_create_script(DCIM_WRAP(get_shooting_card()->file_number - intervalometer_pictures_taken + 1));
+        interval_create_script(MOD(get_shooting_card()->file_number - intervalometer_pictures_taken + 1, 10000));
         //~ display_on();
     }
 #endif
@@ -5630,9 +5663,7 @@ int take_fast_pictures( int number )
         int f0 = get_shooting_card()->file_number;
         SW1(1,100);
         SW2(1,100);
-        while (get_halfshutter_pressed() &&
-               DCIM_WRAP(f0 + number - get_shooting_card()->file_number + 10) > 10)
-        {
+        while (MOD(f0 + number - get_shooting_card()->file_number + 10, 10000) > 10 && get_halfshutter_pressed()) {
             msleep(10);
         }
         SW2(0,100);
@@ -6479,7 +6510,7 @@ shoot_task( void* unused )
             #ifdef FEATURE_INTERVALOMETER
             if (intervalometer_pictures_taken)
             {
-                interval_create_script(DCIM_WRAP(get_shooting_card()->file_number - intervalometer_pictures_taken + 1));
+                interval_create_script(MOD(get_shooting_card()->file_number - intervalometer_pictures_taken + 1, 10000));
             }
             intervalometer_pictures_taken = 0;
             int seconds_clock = get_seconds_clock();
@@ -6556,6 +6587,7 @@ static void shoot_init()
 
     menu_add( "Shoot", shoot_menus, COUNT(shoot_menus) );
     menu_add( "Expo", expo_menus, COUNT(expo_menus) );
+    menu_add( "Movie", expo_menusmovie, COUNT(expo_menusmovie) );
     
     //~ menu_add( "Tweaks", vid_menus, COUNT(vid_menus) );
 

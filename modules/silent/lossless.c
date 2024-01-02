@@ -242,8 +242,8 @@ int lossless_init()
             0x2002d,    /* Write connection 45 (compressed output) */
           //0x20016,    /* Write connection 22 (for WR2 - not used) */
             0x50034,
-          //0x5002d,    /* ArcziPL: workaround, TTL_Prepare stucks otherwise if called in LV */
-          //0x50010,    /* ArcziPL: workaround, TTL_Prepare stucks otherwise if compiled with FEATURE_FPS_OVERRIDE defined */
+          //0x5002d,    /* workaround, TTL_Prepare stucks otherwise if called in LV */
+            0x50010,
             0x90001,
             0x230000,
             0x160000,
@@ -339,7 +339,7 @@ int lossless_compress_raw_rectangle(
     {
         /* 70D is different */
         // EngDrvOut(0xC0F373F4, 0x00000000);  /* alternative fixing method; 0x7FFF7FFF on 70D */
-        EngDrvOut(0xC0F373B4, 0);  
+        EngDrvOut(0xC0F373B4, 0);              /* 0x11 on 70D */
         EngDrvOut(0xC0F37300, PACK32(width    - 1,  height/2  - 1));  /* 0xE7B0ADF on 70D */
         EngDrvOut(0xC0F373E8, PACK32(width    - 1,  height/2  - 1));  /* 0xE7B0ADF on 70D */
     }

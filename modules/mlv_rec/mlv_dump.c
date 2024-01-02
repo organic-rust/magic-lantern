@@ -3444,7 +3444,7 @@ read_headers:
                             frame_info.mlv_filename         = input_filename;
                             frame_info.fps_override         = alter_fps;
                             frame_info.deflicker_target     = deflicker_target;
-                            frame_info.vertical_stripes     = fix_vert_stripes;
+                            //frame_info.vertical_stripes     = fix_vert_stripes; //Unreliable and buggy with dualiso
                             frame_info.focus_pixels         = fix_focus_pixels;
                             frame_info.bad_pixels           = fix_cold_pixels;
                             frame_info.dual_iso             = is_dual_iso;
@@ -3493,6 +3493,12 @@ read_headers:
                                     dng_data.image_size = frame_buffer_size;
                                     break;
                             }
+                        }
+                        
+                        /* call raw2dng code, replaces frame_info.vertical_stripes */
+                        if (fix_vert_stripes)
+                        {
+                            fix_vertical_stripes();
                         }
 
                         if(run_compressor)

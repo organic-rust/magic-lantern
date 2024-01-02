@@ -237,8 +237,8 @@ struct menu_entry
 #define UNIT_PERCENT 3
 #define UNIT_PERCENT_x10 4
 #define UNIT_ISO 5
-#define UNIT_HEX 6      /* unsigned */
-#define UNIT_DEC 7      /* signed */
+#define UNIT_HEX 6
+#define UNIT_DEC 7
 #define UNIT_TIME 8     /* seconds */
 #define UNIT_TIME_MS 9  /* milliseconds */
 #define UNIT_TIME_US 10 /* microseconds */
@@ -263,9 +263,6 @@ struct menu_entry
 
 #define DEP_SOUND_RECORDING (1<<14)
 #define DEP_NOT_SOUND_RECORDING (1<<15)
-
-#define DEP_CONTINUOUS_AF (1<<16)
-#define DEP_NOT_CONTINUOUS_AF (1<<17)
 
 struct menu
 {
@@ -365,6 +362,9 @@ extern MENU_UPDATE_FUNC(menu_advanced_update);
 //~ #else
 //~ #define MENU_WARNING_COLOR 254
 //~ #endif
+
+// Allow access to menu
+struct menu * menu_get_root();
 
 /* post a redraw event to menu task */
 void menu_redraw();

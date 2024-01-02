@@ -17,6 +17,7 @@
 
 /** This camera has a DIGIC V chip */
 #define CONFIG_DIGIC_V
+#define CONFIG_KILL_FLICKER
 
 /** This camera has an APS-C sensor */
 //~ #define CONFIG_FULLFRAME
@@ -136,9 +137,6 @@
 /** We have access to Raw data */
 #define CONFIG_RAW_LIVEVIEW
 #define CONFIG_RAW_PHOTO
-
-/** Disable canon drawing in LiveView, mainly for having clean preview when using crop_rec presets **/
-#define CONFIG_KILL_FLICKER
 
 /** We can control audio settings from ML **/
 //~ #define CONFIG_AUDIO_CONTROLS

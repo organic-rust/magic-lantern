@@ -665,17 +665,11 @@ lens_focus(
     int extra_delay
 )
 {
-#ifdef CONFIG_FOCUS_COMMANDS_PROP_NOT_CONFIRMED
-    /* always wait on old models */
-    wait = 1;
-#endif
-
     lv_focus_done = 0;
     lv_focus_error = 0;
 
     if (!lv) return 0;
     if (is_manual_focus()) return 0;
-    if (is_continuous_af()) return 0;
 
     if (num_steps < 0)
     {
@@ -703,23 +697,13 @@ lens_focus(
                 /* not all cameras having this string require this though (550D, maybe 7D as well) */
                 /* todo: VxWorks cameras may require this too */
                 extern volatile int pfAfComplete_counter;
-
                 int old = pfAfComplete_counter;
-                while (pfAfComplete_counter == old)
-                {
-                    msleep(20);
-                }
 
-                /* send focus command */
                 prop_request_change(PROP_LV_LENS_DRIVE_REMOTE, &focus_cmd, 4);
 
-                /* wait for confirmation from PROP_LV_FOCUS_DONE */
-                lens_focus_wait();
-
-                old = pfAfComplete_counter;
                 while (pfAfComplete_counter == old)
                 {
-                    msleep(20);
+                    msleep(10);
                 }
 #else
                 /* request and wait for confirmation */
@@ -2704,9 +2688,9 @@ static LVINFO_UPDATE_FUNC(picq_update)
         if (is_movie_mode())
         {
             /* todo: icon? */
-            snprintf(buffer, sizeof(buffer), "RAW");
+            snprintf(buffer, sizeof(buffer), "Immortal");
         }
-        item->color_fg = raw_lv == 1 ? COLOR_GREEN1 : COLOR_GRAY(20);
+        item->color_fg = COLOR_GREEN1;
     }
 }
 
@@ -2782,7 +2766,8 @@ static LVINFO_UPDATE_FUNC(fps_update)
 
     if (is_movie_mode())
     {
-        int f = fps_get_current_x1000();
+        int f = shamem_read(0xc0f0501c) == 0x20 ? 400: shamem_read(0xc0f0501c) == 0x21 ? 1000: shamem_read(0xc0f0501c) == 0x22 ? 2000: 
+			    shamem_read(0xc0f0501c) == 0x23 ? 3000: shamem_read(0xc0f0501c) == 0x24 ? 4000: shamem_read(0xc0f0501c) == 0x25 ? 5000: fps_get_current_x1000();
         snprintf(buffer, sizeof(buffer), 
             "%2d.%03d", 
             f / 1000, f % 1000
@@ -2811,12 +2796,6 @@ static LVINFO_UPDATE_FUNC(free_space_update)
         fsg,
         fsgf
     );
-}
-
-static LVINFO_UPDATE_FUNC(mode_update)
-{
-    LVINFO_BUFFER(8);
-    snprintf(buffer, sizeof(buffer), get_shootmode_name_short(shooting_mode_custom));
 }
 
 static LVINFO_UPDATE_FUNC(focal_len_update)
@@ -2953,14 +2932,25 @@ static LVINFO_UPDATE_FUNC(iso_update)
         }
         
         int iso = raw2iso(iso_equiv_raw);
-        
-        if (iso > 1600)
-        {
-            /* think twice before increasing ISO above this value */
-            item->color_fg = COLOR_ORANGE;
-        }
-        
-        STR_APPEND(buffer, "%d", iso);
+    
+/* restricting autoiso for eom, 100D and 5D3. Switch in crop_rec.c */
+		if (shamem_read(0xC0F0b12c) == 0x7 && lens_info.raw_iso_auto > 0x5d) 
+		{
+			STR_APPEND(buffer, "400+");
+		}
+		else if (shamem_read(0xC0F0b12c) == 0x8 && lens_info.raw_iso_auto > 0x63) 
+		{
+			STR_APPEND(buffer, "800+");
+		}
+		else if (shamem_read(0xC0F0b12c) == 0x9 && lens_info.raw_iso_auto > 0x6d) 
+		{
+			STR_APPEND(buffer, "1600+");
+		}
+		else
+		{
+			STR_APPEND(buffer, "%d", iso);
+		}
+
     }
     else /* photo mode */
     {
@@ -3172,14 +3162,6 @@ static struct lvinfo_item info_items[] = {
         .name = "Free space",
         .which_bar = LV_TOP_BAR_ONLY,
         .update = free_space_update,
-    },
-    /* Bottom bar */
-    {
-        .name = "Mode",
-        .which_bar = LV_BOTTOM_BAR_ONLY,
-        .update = mode_update,
-        .priority = 1,
-        .preferred_position = -128,
     },
     {
         .name = "Focal len",

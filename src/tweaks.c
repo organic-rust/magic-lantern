@@ -431,12 +431,7 @@ static void print_set_maindial_hint(int set)
         else
         {
             info_led_off();
-            #ifdef CONFIG_TOUCHSCREEN
-            #warning FIXME: dialog_redraw breaks touchscreen functionality in PLAY mode, why?! (issue #2901)
-            bmp_idle_copy(1, 0);
-            #else
             redraw();
-            #endif
         }
     }
 }
@@ -501,12 +496,8 @@ int handle_set_wheel_play(struct event * event)
         else if (event->param == BGMT_UNPRESS_SET)
       #endif        
         {
-            /* only clear the display if something was printed */
-            if (set_maindial_action_enabled)
-            {
-                set_maindial_action_enabled = 0;
-                print_set_maindial_hint(0);
-            }
+            set_maindial_action_enabled = 0;
+            print_set_maindial_hint(0);
         }
     
         // make sure the display is updated, just in case
@@ -2737,45 +2728,20 @@ static void grayscale_menus_step()
 
     prev_sig = sig;
 
-    #ifdef CONFIG_5D3_123
-    if (!lv)
+    if (get_yuv422_vram()->vram == 0 && !lv)
     {
-        static int dirty = 0;
-        if (get_yuv422_vram()->vram == 0)
-        {
-            /* 5D3-123 quirk: YUV422 RAM is not initialized until going to LiveView or Playback mode
-             * (and even there, you need a valid image first)
-             * Workaround: if YUV422 was not yet initialized by Canon, remove the transparency from color 0 (make it black).
-             * 
-             * Any other cameras requiring this? 
-             * Probably not, since the quirk is likely related to the dual monitor support.
-             * 6D shows artifacts in QEMU when running benchmarks
-             * or playing Arkanoid, but apparently clean when running on hardware.
-             * 700D and 1100D also have uninitialized buffer.
-             * 700D and 5D3 1.1.3 do not show any artifacts at startup; 5D3 1.2.3 does.
-             * 550D and 600D are OK.
-             * 
-             * Side effects: issue #2901.
-             * 
-             * Note: alter_bitmap_palette will not affect color 0, so it will not break this workaround (yet).
-             */
-            if (!dirty)
-            {
-                alter_bitmap_palette_entry(0, COLOR_BLACK, 256, 256);
-                dirty = 1;
-            }
-        }
-        else
-        {
-            /* undo our hack */
-            if (dirty)
-            {
-                alter_bitmap_palette_entry(0, 0, 256, 256);
-                dirty = 0;
-            }
-        }
+        /* 5D3-123 quirk: YUV422 RAM is not initialized until going to LiveView or Playback mode
+         * (and even there, you need a valid image first)
+         * Workaround: if YUV422 was not yet initialized by Canon, remove the transparency from color 0 (make it black).
+         * 
+         * Any other cameras requiring this? At least 6D shows artifacts in QEMU when running benchmarks
+         * or playing Arkanoid. 700D and 1100D also have uninitialized buffer. 550D and 600D are OK.
+         * No side effects on cameras that don't need this workaround => always enabled.
+         * 
+         * Note: alter_bitmap_palette will not affect color 0, so it will not break this workaround (yet).
+         */
+        alter_bitmap_palette_entry(0, COLOR_BLACK, 256, 256);
     }
-    #endif
 
     if (bmp_color_scheme || prev_b)
     {
@@ -2866,8 +2832,8 @@ static CONFIG_INT("anamorphic.preview", anamorphic_preview, 0);
 
 #ifdef FEATURE_ANAMORPHIC_PREVIEW
 
-static int anamorphic_ratio_num[10] = {5, 4, 7, 3, 5, 9, 2};
-static int anamorphic_ratio_den[10] = {4, 3, 5, 2, 3, 5, 1};
+static int anamorphic_ratio_num[10] = {5, 4, 7, 3, 5, 9, 2, 3};
+static int anamorphic_ratio_den[10] = {4, 3, 5, 2, 3, 5, 1, 1};
 
 static MENU_UPDATE_FUNC(anamorphic_preview_display)
 {
@@ -3419,11 +3385,7 @@ void display_filter_step(int k)
 #endif
 
 #ifdef CONFIG_KILL_FLICKER
-#if defined(CONFIG_50D)
 CONFIG_INT("kill.canon.gui", kill_canon_gui_mode, 1);
-#else
-CONFIG_INT("kill.canon.gui", kill_canon_gui_mode, 0);
-#endif
 #endif
 
 extern int clearscreen;
@@ -3437,6 +3399,16 @@ extern MENU_UPDATE_FUNC(display_gain_print);
 extern int display_gain_menu_index;
 
 static struct menu_entry display_menus[] = {
+    #ifdef CONFIG_KILL_FLICKER
+        {
+            .name       = "Kill Canon GUI",
+            .priv       = &kill_canon_gui_mode,
+            .max        = 1,
+            .choices    = CHOICES("OFF", "ON"),
+            .depends_on = DEP_GLOBAL_DRAW,
+            .help = "Workarounds for disabling Canon graphics elements."
+        },
+    #endif
             #ifdef FEATURE_DIGIC_FOCUS_PEAKING
             {
                 .name = "LV DIGIC peaking",
@@ -3583,8 +3555,8 @@ static struct menu_entry display_menus[] = {
         .name = "Anamorphic",
         .priv     = &anamorphic_preview,
         .update = anamorphic_preview_display, 
-        .max = 7,
-        .choices = (const char *[]) {"OFF", "5:4 (1.25)", "4:3 (1.33)", "7:5 (1.4)", "3:2 (1.5)", "5:3 (1.66)", "9:5 (1.8)", "2:1"},
+        .max = 8,
+        .choices = (const char *[]) {"OFF", "5:4 (1.25)", "4:3 (1.33)", "7:5 (1.4)", "3:2 (1.5)", "5:3 (1.66)", "9:5 (1.8)", "2:1", "3:1"},
         .help = "Stretches LiveView image vertically, for anamorphic lenses.",
         .depends_on = DEP_LIVEVIEW | DEP_GLOBAL_DRAW,
 /*
@@ -3607,16 +3579,6 @@ static struct menu_entry display_menus[] = {
         .submenu_width = 710,
         .help = "Screen orientation, position fine-tuning...",
         .children =  (struct menu_entry[]) {
-            #ifdef CONFIG_KILL_FLICKER
-                {
-                    .name       = "Kill Canon GUI",
-                    .priv       = &kill_canon_gui_mode,
-                    .max        = 2,
-                    .choices    = CHOICES("OFF", "Idle/Menus", "Idle/Menus+Keys"),
-                    .depends_on = DEP_GLOBAL_DRAW,
-                    .help = "Workarounds for disabling Canon graphics elements."
-                },
-            #endif
             #ifdef FEATURE_SCREEN_LAYOUT
                 {
                     .name = "Screen Layout",

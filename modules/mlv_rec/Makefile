@@ -21,8 +21,8 @@ endif
 
 # to allow x64 binaries. doesn't work on OSX, seems to SIGSEGV for some reason.
 ifndef USE_X64
-    MLV_CFLAGS += -m32
-    MLV_LFLAGS += -m32
+    MLV_CFLAGS += -m64
+    MLV_LFLAGS += -m64
 endif
 
 # just comment out to disable LUA

@@ -106,9 +106,6 @@
 /** Touch screen support **/
 #define CONFIG_TOUCHSCREEN
 
-/** Intermediate "x1" zoom, before going into x5/x10 (what's the point?!) */
-#define CONFIG_ZOOM_X1
-
 /** Perfect sync using EVF_STATE **/
 #define CONFIG_EVF_STATE_SYNC
 
@@ -124,9 +121,6 @@
 /** We have access to raw data in both photo mode and in LiveView */
 #define CONFIG_RAW_PHOTO
 #define CONFIG_RAW_LIVEVIEW
-
-/** Disable canon drawing in LiveView, mainly for having clean preview when using crop_rec presets **/
-#define CONFIG_KILL_FLICKER
 
 /** Hide Canon bottom bar from DebugMsg hook */
 #define CONFIG_LVAPP_HACK_DEBUGMSG

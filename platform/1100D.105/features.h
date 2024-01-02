@@ -11,6 +11,7 @@
 // Disable almost all audio stuff
 #undef FEATURE_WAV_RECORDING
 #undef FEATURE_FPS_WAV_RECORD
+#undef FEATURE_BEEP
 #undef FEATURE_VOICE_TAGS
 #undef FEATURE_AUDIO_REMOTE_SHOT
 

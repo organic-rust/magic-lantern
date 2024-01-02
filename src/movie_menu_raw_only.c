@@ -29,12 +29,11 @@ static struct menu_entry movie_menu_raw_toggle[] =
     //     .placeholder = 1,
     // },
     {
-        .name = "custom modes",
+        .name = "presets",
         .placeholder = 1,
     },
-    /*
     {
-        .name = "presets",
+        .name = "custom modes",
         .placeholder = 1,
     },
     {
@@ -81,7 +80,6 @@ static struct menu_entry movie_menu_raw_toggle[] =
         .name = "customized buttons",
         .placeholder = 1,
     },
-     */
 };
 
 static void movie_menu_raw_only_init()

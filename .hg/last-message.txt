@@ -1,1 +1,1 @@
-new branch called crop_mood_danne
+raw.c: back to 2047 black level number

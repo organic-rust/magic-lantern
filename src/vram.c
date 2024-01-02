@@ -61,17 +61,6 @@ int y_times_BMPPITCH_cache[BMP_H_PLUS - BMP_H_MINUS];
 
 static void vram_update_luts()
 {
-    static int prev_bm2lv_tx = 0;
-    static int prev_bm2lv_sx = 0;
-    if (bm2lv.tx == prev_bm2lv_tx &&
-        bm2lv.sx == prev_bm2lv_sx)
-    {
-        /* unchanged */
-        return;
-    }
-    prev_bm2lv_tx = bm2lv.tx;
-    prev_bm2lv_sx = bm2lv.sx;
-
     for (int x = BMP_W_MINUS; x < BMP_W_PLUS; x++) 
     {
         bm2lv_x_cache[x - BMP_W_MINUS] = BM2LV_Xu(x);
@@ -148,7 +137,6 @@ void vram_params_set_dirty()
 }
 
 static uint32_t hd_size = 0;
-
 static void vram_params_update_if_dirty()
 {
     #ifdef REG_EDMAC_WRITE_LV_ADDR
@@ -165,8 +153,8 @@ static void vram_params_update_if_dirty()
         BMP_LOCK( 
             if (vram_params_dirty)
             {
-                _update_vram_params(); 
-                vram_params_dirty = 0;
+                 _update_vram_params(); 
+                 vram_params_dirty = 0; 
             }
         )
     }
